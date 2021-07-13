@@ -48,7 +48,7 @@ int main()
         primary_monitor_width,
         primary_monitor_height, 
         "Planet Generator", 
-        glfwGetPrimaryMonitor(), 
+        nullptr, 
         nullptr);
         
     if (!window)
@@ -93,19 +93,27 @@ int main()
         inputable->on_input_init(window);
     }
 
-    modules::getInstance().main_camera->update_window_size(800,600);
+    modules::getInstance().main_camera->update_window_size(primary_monitor_width,primary_monitor_height);
     modules::getInstance().main_camera->look_at(glm::vec3(0.0f,0.0f,10.0), glm::vec3(0.0f,0.0f,0.0f), glm::vec3(0.0f,1.0f,0.0f));
 
     auto prev_frame_time = system_clock::now();
     auto next_frame_time = prev_frame_time + framerate{1};
+
+    glEnable(GL_CULL_FACE);  
+    glCullFace(GL_BACK);
+    glFrontFace(GL_CW);  
+    glDepthMask(GL_TRUE);
+    glDepthFunc(GL_LESS);
+
+    auto clear_grey = 200.0f/255.0f;
 
     while (!glfwWindowShouldClose(window))
     {
         std::this_thread::sleep_until(next_frame_time);
         next_frame_time += framerate{1};
 
-        glClearColor(1.00f, 0.19f, 0.04f, 1.00f);
-        glClear(GL_COLOR_BUFFER_BIT);
+        glClearColor(clear_grey, clear_grey, clear_grey, 1.0f);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         process_input(window);
 

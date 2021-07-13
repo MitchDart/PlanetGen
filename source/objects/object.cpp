@@ -27,9 +27,6 @@ void object::on_update(double delta) {}
 
 void object::initilize_vao() {
     auto mesh = get_mesh();
-
-    auto first = mesh.get()[0];
-    auto last = mesh.get()[17];
     
     glGenVertexArrays(1, &vao_handle);
     glBindVertexArray(vao_handle);
@@ -41,7 +38,7 @@ void object::initilize_vao() {
     glBindBuffer(GL_ARRAY_BUFFER, position_vbo_handle);
     glBufferData(GL_ARRAY_BUFFER, vertex_count * 3 * sizeof(float), mesh.get(), GL_STATIC_DRAW);
 
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
     glEnableVertexAttribArray(0);  
 }
 

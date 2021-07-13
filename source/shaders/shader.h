@@ -18,5 +18,4 @@ class shader {
         std::string name;
         GLuint shader_handle;
 };
-
 #endif
