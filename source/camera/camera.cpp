@@ -43,12 +43,17 @@ void camera::on_update(double delta) {
         diff_mouse_y = diff_mouse_y/width;
 
         orbit_angle_x = orbit_start_angle_x + (2.0f * M_PI * diff_mouse_x * orbit_speed);
-        orbit_angle_y = orbit_start_angle_y + (2.0f * M_PI * diff_mouse_y * orbit_speed);
+        orbit_angle_y = std::min(M_PI/2.0f, std::max(-M_PI/2.0f ,orbit_start_angle_y + (2.0f * M_PI * diff_mouse_y * orbit_speed)));
     } else {
         is_panning = false;
     }
 
-    look_matrix = glm::lookAt(glm::vec3(0.0f,0.0f,-zoom), glm::vec3(0.0f,0.0f,0.0f), glm::vec3(0.0f,1.0f,0.0f)) * glm::rotate(glm::mat4(1.0f), orbit_angle_x, glm::vec3(0.0f,1.0f,0.0f))  * glm::rotate(glm::mat4(1.0f), orbit_angle_y, glm::vec3(1.0f,0.0f,0.0f));
+    auto x_rotation_matrix = glm::rotate(glm::mat4(1.0f), orbit_angle_x, glm::vec3(0.0f,1.0f,0.0f));
+
+    auto y_rotation_axis = glm::vec4(1.0f,0.0f,0.0f,0.0f) * x_rotation_matrix;
+    auto y_rotation_matrix = glm::rotate(glm::mat4(1.0f), orbit_angle_y, glm::vec3(y_rotation_axis.x, y_rotation_axis.y, y_rotation_axis.z));
+
+    look_matrix = glm::lookAt(glm::vec3(0.0f,0.0f,-zoom), glm::vec3(0.0f,0.0f,0.0f), glm::vec3(0.0f,1.0f,0.0f)) * x_rotation_matrix * y_rotation_matrix;
 }
 
 void camera::on_destroy() {}
@@ -60,7 +65,7 @@ const char* camera::window_name() {
 void camera::on_draw_ui() {
     ImGui::Text("Camera");
     ImGui::SliderAngle("FOV", &fov, 0.0f, 100.0f);
-    ImGui::SliderFloat("Orbit speed", &orbit_speed, 0.0f, 2.0f);
+    ImGui::SliderFloat("Orbit speed", &orbit_speed, 0.0f, 5.0f);
     ImGui::SliderFloat("Near clip", &near_clip, 0.0f, 10.0f);
     ImGui::SliderFloat("Far clip", &far_clip, 10.0f, 100.0f);
     ImGui::SliderFloat("Zoom speed", &zoom_speed, 0.0f, 5.0f);
