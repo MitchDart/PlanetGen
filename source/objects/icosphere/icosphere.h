@@ -1,5 +1,5 @@
-#ifndef _COLOR_CUBE_H
-#define _COLOR_CUBE_H
+#ifndef _ICOSPHERE_H
+#define _ICOSPHERE_H
 
 #include <memory>
 #include <vector>
@@ -9,15 +9,13 @@
 
 #include "../object.h"
 
-class color_cube : public object {
+class icosphere : public object {
     public:
-        color_cube(std::shared_ptr<camera> camera);
+        icosphere(std::shared_ptr<camera> camera) : object(camera) {};
         std::shared_ptr<float[]> get_vertices();
         std::shared_ptr<unsigned int[]> get_indices();
     protected:
     private:
-        std::shared_ptr<float[]> vertices;
-        std::shared_ptr<unsigned int[]> indices;
 };
 
 #endif

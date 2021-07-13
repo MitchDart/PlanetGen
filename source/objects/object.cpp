@@ -18,7 +18,7 @@ void object::on_draw() {
     glUniformMatrix4fv(mvp_id, 1, GL_FALSE, glm::value_ptr(mvp));
 
     glBindVertexArray(vao_handle);
-    glDrawArrays(GL_TRIANGLES, 0, vertex_count);
+    glDrawElements(GL_TRIANGLES, index_count, GL_UNSIGNED_INT, 0);
 }
 
 void object::on_destroy() {}
@@ -26,7 +26,8 @@ void object::on_destroy() {}
 void object::on_update(double delta) {}
 
 void object::initilize_vao() {
-    auto mesh = get_mesh();
+    auto vertices = get_vertices();
+    auto indices = get_indices();
     
     glGenVertexArrays(1, &vao_handle);
     glBindVertexArray(vao_handle);
@@ -36,7 +37,14 @@ void object::initilize_vao() {
     glGenBuffers(1, &position_vbo_handle);
     
     glBindBuffer(GL_ARRAY_BUFFER, position_vbo_handle);
-    glBufferData(GL_ARRAY_BUFFER, vertex_count * 3 * sizeof(float), mesh.get(), GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, vertex_count * 3 * sizeof(float), vertices.get(), GL_STATIC_DRAW);
+
+    GLuint element_vbo_handle;
+
+    glGenBuffers(1, &element_vbo_handle);
+
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, element_vbo_handle);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, index_count * sizeof(unsigned int), indices.get(), GL_STATIC_DRAW);
 
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
     glEnableVertexAttribArray(0);  

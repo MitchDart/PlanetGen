@@ -22,10 +22,12 @@ class object : public drawable {
         void on_destroy();
         void on_update(double delta);
 
-        virtual std::shared_ptr<float[]> get_mesh() = 0;
+        virtual std::shared_ptr<float[]> get_vertices() = 0;
+        virtual std::shared_ptr<unsigned int[]> get_indices() = 0;
         glm::mat4 get_model_matrix();
     protected:
         int vertex_count;
+        int index_count;
         std::shared_ptr<camera> main_camera;
     private:
         void initilize_vao();
