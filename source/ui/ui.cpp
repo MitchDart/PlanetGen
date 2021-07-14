@@ -34,7 +34,7 @@ void ui::on_draw() {
         if(ImGui::BeginMenu("ImGui"))
         {
             if(ImGui::Button("Show demo")) {
-                showDebug = !showDebug;
+                showDemo = !showDemo;
             }
             ImGui::EndMenu();
         }
@@ -43,7 +43,9 @@ void ui::on_draw() {
     }
     ImGui::End();
 
-    ImGui::ShowDemoWindow(&showDebug);
+    if (showDemo) {
+        ImGui::ShowDemoWindow(&showDemo);
+    }
 
     ImGui::Render();
 

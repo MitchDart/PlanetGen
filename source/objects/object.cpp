@@ -50,6 +50,14 @@ void object::initilize_vao() {
     glEnableVertexAttribArray(0);  
 }
 
+void object::translate(glm::vec3 offset) {
+    translation_matrix = glm::translate(translation_matrix, offset);
+}
+
+void object::rotate(float angle, glm::vec3 axis) {
+    rotation_matrix = glm::rotate(rotation_matrix, angle, axis);
+}
+
 glm::mat4 object::get_model_matrix() {
     return translation_matrix * rotation_matrix * scale_matrix;
 }

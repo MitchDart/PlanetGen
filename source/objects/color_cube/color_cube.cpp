@@ -46,7 +46,7 @@ color_cube::color_cube(std::shared_ptr<camera> camera) : object(camera) {
             6, 7, 3,
     };
 
-    std::shared_ptr<float[]> array_vert(new float[8], [](const float* other) { delete[] other; });
+    std::shared_ptr<float[]> array_vert(new float[8 * 3], [](const float* other) { delete[] other; });
 
     for (int i = 0; i < 8; i++) {
         array_vert.get()[i * 3 + 0] = verts[i].x;
@@ -74,4 +74,20 @@ std::shared_ptr<float[]> color_cube::get_vertices() {
 
 std::shared_ptr<unsigned int[]> color_cube::get_indices() {
     return indices;
+}
+
+void color_cube::on_draw_ui() 
+{
+    ImGui::SliderFloat("x", &x, -10.0f, 10.0f);
+}
+
+const char* color_cube::window_name()
+{
+    return "Color cube";
+}
+
+void color_cube::on_update(double delta) 
+{
+    rotation_matrix = glm::mat4(1.0f);
+    rotate(x, glm::vec3(1.0f, 0, 0));
 }
