@@ -48,7 +48,7 @@ int main()
         primary_monitor_width,
         primary_monitor_height, 
         "Planet Generator", 
-        nullptr, 
+        nullptr,
         nullptr);
         
     if (!window)
@@ -102,7 +102,8 @@ int main()
     glEnable(GL_CULL_FACE);  
     glCullFace(GL_BACK);
     glFrontFace(GL_CW);  
-    glDepthMask(GL_TRUE);
+    glEnable(GL_DEPTH_TEST); // calculates a z-index in 2d 
+    glDepthMask(GL_TRUE); // calculates a z-index in 2d 
     glDepthFunc(GL_LESS);
 
     auto clear_grey = 200.0f/255.0f;
