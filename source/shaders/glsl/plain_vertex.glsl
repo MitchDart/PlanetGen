@@ -1,12 +1,19 @@
 #version 460
+
 layout (location = 0) in vec3 vertex_position;
+layout (location = 1) in vec3 vertex_normal;
 
 out vec3 position;
+out vec3 normal;
 
-uniform mat4 mvp;
+uniform mat4 matrix_mvp;
+uniform mat4 matrix_v;
+uniform mat4 matrix_m;
 
 void main()
 {
     position = vertex_position;
-    gl_Position = mvp * vec4(vertex_position.x, vertex_position.y, vertex_position.z, 1.0);
+    normal = normalize(matrix_m * vec4(vertex_normal, 0.0f)).xyz;
+
+    gl_Position = matrix_mvp * vec4(vertex_position, 1.0f);
 }

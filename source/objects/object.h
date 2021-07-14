@@ -27,6 +27,7 @@ class object : public drawable {
 
         virtual std::shared_ptr<float[]> get_vertices() = 0;
         virtual std::shared_ptr<unsigned int[]> get_indices() = 0;
+        virtual std::shared_ptr<float[]> get_normals() = 0;
         glm::mat4 get_model_matrix();
     protected:
         int vertex_count;
@@ -37,7 +38,7 @@ class object : public drawable {
         glm::mat4 translation_matrix = glm::mat4(1.0f);
         glm::mat4 rotation_matrix = glm::mat4(1.0f);
     private:
-        void initilize_vao();
+        void initilize_vao(); 
         
         GLuint vao_handle;
         shader_program program;

@@ -30,6 +30,7 @@ class camera : public drawable, public inputable, public windowable {
         void on_scroll(double,double);
 
         glm::mat4 get_camera_matrix();
+        glm::mat4 get_look_matrix();
         void look_at(glm::vec3, glm::vec3, glm::vec3);
         void update_window_size(int, int);
     protected:

@@ -6,6 +6,10 @@ glm::mat4 camera::get_camera_matrix() {
     return projection * look_matrix;
 }
 
+glm::mat4 camera::get_look_matrix() {
+    return look_matrix;
+}
+
 void camera::look_at(glm::vec3 eye, glm::vec3 center, glm::vec3 up) {
     look_matrix = glm::lookAt(eye, center, up);
 }
