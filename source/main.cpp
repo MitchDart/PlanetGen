@@ -94,7 +94,6 @@ int main()
     }
 
     modules::getInstance().main_camera->update_window_size(primary_monitor_width,primary_monitor_height);
-    modules::getInstance().main_camera->look_at(glm::vec3(0.0f,0.0f,10.0), glm::vec3(0.0f,0.0f,0.0f), glm::vec3(0.0f,1.0f,0.0f));
 
     auto prev_frame_time = system_clock::now();
     auto next_frame_time = prev_frame_time + framerate{1};

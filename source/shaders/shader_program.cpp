@@ -1,13 +1,22 @@
 #include "shader_program.h"        
         
-shader_program::shader_program(const char* vertex_shader, const char* fragment_shader) {
-    shader vertex(vertex_shader, GL_VERTEX_SHADER);
-    shader fragment(fragment_shader , GL_FRAGMENT_SHADER);
-
+shader_program::shader_program(const char* vertex_shader, const char* fragment_shader, const char* geometry_shader) {
     shader_program_handle = glCreateProgram();
 
-    glAttachShader(shader_program_handle, vertex.get_handle());
-    glAttachShader(shader_program_handle, fragment.get_handle());
+    if(vertex_shader != nullptr) {
+        shader vertex(vertex_shader, GL_VERTEX_SHADER);
+        glAttachShader(shader_program_handle, vertex.get_handle());
+    }
+
+    if(fragment_shader != nullptr) {
+        shader fragment(fragment_shader , GL_FRAGMENT_SHADER);
+        glAttachShader(shader_program_handle, fragment.get_handle());
+    }
+
+    if(geometry_shader != nullptr) {
+        shader geometry(fragment_shader , GL_GEOMETRY_SHADER);
+        glAttachShader(shader_program_handle, geometry.get_handle());
+    }
 
     glLinkProgram(shader_program_handle);
 

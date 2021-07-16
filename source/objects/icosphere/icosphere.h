@@ -19,9 +19,7 @@ class icosphere : public object {
     private:
         std::shared_ptr<float[]> vertices;
         std::shared_ptr<unsigned int[]> indices;
-        std::shared_ptr<float[]> normals;
-
-        void calc_norms();
 };
+
 
 #endif

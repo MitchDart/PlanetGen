@@ -51,7 +51,7 @@ class camera : public drawable, public inputable, public windowable {
         
         float orbit_speed = 2.0f;
 
-        float zoom = -10.0f;
+        float zoom = -30.0f;
         float zoom_speed = 1.0f;
 
         bool is_panning = false;

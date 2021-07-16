@@ -6,7 +6,7 @@ object::object(std::shared_ptr<camera> _main_camera) {
 
 void object::on_create() {
     initilize_vao();
-    program = shader_program("plain_vertex.glsl","plain_fragment.glsl");
+    program = shader_program("plain_vertex.glsl","plain_fragment.glsl", nullptr);
 }
 
 void object::on_draw() {

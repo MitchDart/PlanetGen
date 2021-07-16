@@ -8,7 +8,7 @@ out vec4 fragment_color;
 void main()
 {
     vec3 offset_pos = (position + 1.0f)/2.0f;
-    float diffuse = clamp(dot(normal, vec3(1.0f,1.0f,1.0f)), 0.2f, 1.0f);
+    float diffuse = clamp(dot(normal, vec3(0.0f,1.0f,1.0f)), 0.0f, 1.0f);
 
-    fragment_color = vec4(offset_pos * diffuse, 1.0f);
+    fragment_color = vec4(normal * diffuse, 1.0f);
 } 
