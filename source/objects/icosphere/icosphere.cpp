@@ -59,7 +59,8 @@ icosphere::icosphere(std::shared_ptr<camera> camera) : object(camera) {
         };
     }
 
-    for (int r = 0; r < 5; r++) {
+
+    for (int r = 0; r < 6; r++) {
 
         index.clear();
 

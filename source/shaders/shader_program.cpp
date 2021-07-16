@@ -14,7 +14,7 @@ shader_program::shader_program(const char* vertex_shader, const char* fragment_s
     }
 
     if(geometry_shader != nullptr) {
-        shader geometry(fragment_shader , GL_GEOMETRY_SHADER);
+        shader geometry(geometry_shader , GL_GEOMETRY_SHADER);
         glAttachShader(shader_program_handle, geometry.get_handle());
     }
 

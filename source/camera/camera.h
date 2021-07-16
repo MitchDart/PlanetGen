@@ -49,7 +49,7 @@ class camera : public drawable, public inputable, public windowable {
         float orbit_start_angle_y = 0.0f;
         float orbit_angle_y = 0.01f;
         
-        float orbit_speed = 2.0f;
+        float orbit_speed = 0.5f;
 
         float zoom = -30.0f;
         float zoom_speed = 1.0f;

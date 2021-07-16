@@ -37,11 +37,18 @@ class object : public drawable {
         glm::mat4 scale_matrix = glm::mat4(1.0f);
         glm::mat4 translation_matrix = glm::mat4(1.0f);
         glm::mat4 rotation_matrix = glm::mat4(1.0f);
+
+        bool debug_transparent = false;
     private:
         void initilize_vao(); 
+
+        void draw_debug_mesh();
+        void draw_debug_normals();
         
         GLuint vao_handle;
-        shader_program program;
+
+        shader_program debug_mesh;
+        shader_program debug_normals;
 
 };
 

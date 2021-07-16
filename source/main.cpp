@@ -48,7 +48,7 @@ int main()
         primary_monitor_width,
         primary_monitor_height, 
         "Planet Generator", 
-        nullptr,
+        glfwGetPrimaryMonitor(),
         nullptr);
         
     if (!window)
@@ -104,6 +104,8 @@ int main()
     glEnable(GL_DEPTH_TEST); // calculates a z-index in 2d 
     glDepthMask(GL_TRUE); // calculates a z-index in 2d 
     glDepthFunc(GL_LESS);
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
     auto clear_grey = 200.0f/255.0f;
 
