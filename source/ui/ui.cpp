@@ -21,25 +21,25 @@ void ui::on_draw() {
     ImGui::NewFrame();
 
     ImGui::Begin("Debug tools", &showDebug, ImGuiWindowFlags_MenuBar);
-    if (ImGui::BeginMenuBar())
+    if (ImGui::BeginTabBar("Debug tools"))
     {
         for (auto windowable : windowables) 
         {  
-            if (ImGui::BeginMenu(windowable->window_name()))
+            if (ImGui::BeginTabItem(windowable->window_name()))
             {
                 windowable->on_draw_ui();
-                ImGui::EndMenu();
+                ImGui::EndTabItem();
             }
         }
-        if(ImGui::BeginMenu("ImGui"))
+        if(ImGui::BeginTabItem("ImGui"))
         {
             if(ImGui::Button("Show demo")) {
                 showDemo = !showDemo;
             }
-            ImGui::EndMenu();
+            ImGui::EndTabItem();
         }
         
-        ImGui::EndMenuBar();
+        ImGui::EndTabBar();
     }
     ImGui::End();
 

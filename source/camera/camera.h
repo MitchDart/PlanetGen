@@ -31,7 +31,8 @@ class camera : public drawable, public inputable, public windowable {
 
         glm::mat4 get_camera_matrix();
         glm::mat4 get_look_matrix();
-        void look_at(glm::vec3, glm::vec3, glm::vec3);
+
+        glm::vec3 get_camera_position();
         void update_window_size(int, int);
     protected:
     private:
@@ -53,6 +54,8 @@ class camera : public drawable, public inputable, public windowable {
 
         float zoom = -30.0f;
         float zoom_speed = 1.0f;
+
+        glm::vec3 camera_position = glm::vec3(0.0f, 0.0f, 0.0f);
 
         bool is_panning = false;
         double pan_start_mouse_x, pan_start_mouse_y;

@@ -6,25 +6,69 @@ object::object(std::shared_ptr<camera> _main_camera) {
 
 void object::on_create() {
     initilize_vao();
-    debug_mesh = shader_program("debug_mesh_vertex.glsl","debug_mesh_fragment.glsl", "debug_mesh_geometry.glsl");
-    debug_normals = shader_program("debug_normal_vertex.glsl","debug_normal_fragment.glsl", "debug_normal_geometry.glsl");
+    debug_mesh_shader = shader_program("debug/debug_mesh_vertex.glsl","debug/debug_mesh_fragment.glsl", "debug/debug_mesh_geometry.glsl");
+    debug_normals_shader = shader_program("debug/debug_normal_vertex.glsl","debug/debug_normal_fragment.glsl", "debug/debug_normal_geometry.glsl");
+    phong_shader = shader_program("phong/phong_vertex.glsl", "phong/phong_fragment.glsl", nullptr);
 }
 
 void object::on_draw() {
-    draw_debug_mesh();
-    draw_debug_normals();
+    if (!debug_mesh && !debug_normals) {
+        draw_phong();
+    } else if (debug_mesh) {
+        draw_debug_mesh();
+        if (debug_normals) {
+            draw_debug_normals();
+        }
+    } 
+}
+
+
+void object::draw_phong() {
+    phong_shader.use_program();
+
+    glm::vec3 camera_position = main_camera->get_camera_position();
+
+    glm::mat4 mvp = main_camera->get_camera_matrix() * get_model_matrix();
+    GLuint mvp_id = glGetUniformLocation(phong_shader.get_shader_program_handle(), "matrix_mvp");
+    GLuint m_id = glGetUniformLocation(phong_shader.get_shader_program_handle(), "matrix_m");
+
+    GLuint camera_position_handle = glGetUniformLocation(phong_shader.get_shader_program_handle(), "camera_position");
+    glUniform3fv(camera_position_handle, 1, glm::value_ptr(camera_position));
+
+    GLuint light_direction_handle = glGetUniformLocation(phong_shader.get_shader_program_handle(), "light_direction");
+    glUniform3fv(light_direction_handle, 1, glm::value_ptr(glm::normalize(light_direction)));
+
+    GLuint ambient_strength_handle = glGetUniformLocation(phong_shader.get_shader_program_handle(), "ambient_strength");
+    glUniform1f(ambient_strength_handle, ambient_strength);
+
+    GLuint specular_strength_handle = glGetUniformLocation(phong_shader.get_shader_program_handle(), "specular_strength");
+    glUniform1f(specular_strength_handle, specular_strength);
+
+    GLuint specular_exponent_handle = glGetUniformLocation(phong_shader.get_shader_program_handle(), "specular_exponent");
+    glUniform1ui(specular_exponent_handle, specular_exponent);
+
+    GLuint diffuse_color_handle = glGetUniformLocation(phong_shader.get_shader_program_handle(), "diffuse_color");
+    glUniform4fv(diffuse_color_handle, 1, glm::value_ptr(diffuse_color));
+
+
+    glUniformMatrix4fv(mvp_id, 1, GL_FALSE, glm::value_ptr(mvp));
+    glUniformMatrix4fv(m_id, 1, GL_FALSE, glm::value_ptr(get_model_matrix()));
+
+    glBindVertexArray(vao_handle);
+
+    glDrawElements(GL_TRIANGLES, index_count, GL_UNSIGNED_INT, 0);
 }
 
 void object::draw_debug_mesh() {
-    debug_mesh.use_program();
+    debug_mesh_shader.use_program();
 
     glm::mat4 mvp = main_camera->get_camera_matrix() * get_model_matrix();
-    GLuint mvp_id = glGetUniformLocation(debug_mesh.get_shader_program_handle(), "matrix_mvp");
-    GLuint v_id = glGetUniformLocation(debug_mesh.get_shader_program_handle(), "matrix_v");
-    GLuint m_id = glGetUniformLocation(debug_mesh.get_shader_program_handle(), "matrix_m");
+    GLuint mvp_id = glGetUniformLocation(debug_mesh_shader.get_shader_program_handle(), "matrix_mvp");
+    GLuint v_id = glGetUniformLocation(debug_mesh_shader.get_shader_program_handle(), "matrix_v");
+    GLuint m_id = glGetUniformLocation(debug_mesh_shader.get_shader_program_handle(), "matrix_m");
 
-    GLuint transparent = glGetUniformLocation(debug_mesh.get_shader_program_handle(), "transparent");
-    glUniform1f(transparent, !debug_transparent);
+    GLuint transparent_handle = glGetUniformLocation(debug_mesh_shader.get_shader_program_handle(), "transparent");
+    glUniform1f(transparent_handle, !debug_transparent);
 
     glUniformMatrix4fv(mvp_id, 1, GL_FALSE, glm::value_ptr(mvp));
     glUniformMatrix4fv(v_id, 1, GL_FALSE, glm::value_ptr(main_camera->get_look_matrix()));
@@ -44,16 +88,16 @@ void object::draw_debug_mesh() {
 }
 
 void object::draw_debug_normals() {
-    debug_normals.use_program();
+    debug_normals_shader.use_program();
 
     glm::mat4 mvp = main_camera->get_camera_matrix() * get_model_matrix();
-    GLuint mvp_id = glGetUniformLocation(debug_normals.get_shader_program_handle(), "matrix_mvp");
+    GLuint mvp_id = glGetUniformLocation(debug_normals_shader.get_shader_program_handle(), "matrix_mvp");
 
-    GLuint color = glGetUniformLocation(debug_normals.get_shader_program_handle(), "color");
-    glUniform4fv(color,1,glm::value_ptr(glm::vec4(1.0f,0.0f,0.0f,1.0f)));
+    GLuint color_handle = glGetUniformLocation(debug_normals_shader.get_shader_program_handle(), "color");
+    glUniform4fv(color_handle,1,glm::value_ptr(debug_normal_color));
 
-    GLuint normal_length = glGetUniformLocation(debug_normals.get_shader_program_handle(), "normal_length");
-    glUniform1f(normal_length, 0.1f);
+    GLuint normal_length = glGetUniformLocation(debug_normals_shader.get_shader_program_handle(), "normal_length");
+    glUniform1f(normal_length, debug_normal_length);
 
     glUniformMatrix4fv(mvp_id, 1, GL_FALSE, glm::value_ptr(mvp));
 
@@ -61,8 +105,6 @@ void object::draw_debug_normals() {
     glDrawElements(GL_TRIANGLES, index_count, GL_UNSIGNED_INT, 0);
 }
         
-
-
 void object::on_destroy() {}
 
 void object::on_update(double delta) {}

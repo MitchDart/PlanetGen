@@ -1,9 +1,5 @@
 #include "icosphere.h"
 
-struct face {
-    glm::vec3 points[3];
-    unsigned int indicies[3];
-};
 
 icosphere::icosphere(std::shared_ptr<camera> camera) : object(camera) {
     const float t = (1.f + sqrtf(5.f)) * 0.5f; 
@@ -12,7 +8,7 @@ icosphere::icosphere(std::shared_ptr<camera> camera) : object(camera) {
 
     using glm::vec3;
 
-    std::vector<vec3> verts = {
+    verts = {
         vec3(a, i, 0), 
         vec3(-a, i, 0),
         vec3( a,-i, 0),
@@ -27,7 +23,7 @@ icosphere::icosphere(std::shared_ptr<camera> camera) : object(camera) {
         vec3( 0,-a,-i)
     };
 
-    std::vector<unsigned int> index = {
+    index = {
         0,  4,  8,
         0,  10, 5,
         2,  9,  4,
@@ -50,7 +46,7 @@ icosphere::icosphere(std::shared_ptr<camera> camera) : object(camera) {
         11, 5,  7
     };
 
-    std::vector<face> faces(20); 
+    faces = std::vector<face>(20);
 
     for (int i = 0; i < 20 * 3; i += 3) {
         faces[i/3] = face {
@@ -60,74 +56,8 @@ icosphere::icosphere(std::shared_ptr<camera> camera) : object(camera) {
     }
 
 
-    for (int r = 0; r < 6; r++) {
-
-        index.clear();
-
-        std::vector<face> new_faces;
-
-        for (int i = 0; i < faces.size(); i++) {
-            auto current_face = faces[i];
-            auto first = current_face.points[0];
-            auto second = current_face.points[1];
-            auto third = current_face.points[2];
-
-            auto first_second = glm::normalize((first + second) / 2.0f); 
-            auto second_third = glm::normalize((second + third) / 2.0f); 
-            auto third_first = glm::normalize((third + first) / 2.0f); 
-
-            unsigned int latest_index = verts.size();
-            verts.push_back(first_second);
-            verts.push_back(second_third);
-            verts.push_back(third_first);
-
-            auto first_second_index = latest_index;
-            auto second_third_index = latest_index + 1;
-            auto third_first_index = latest_index + 2;
-
-            //t1
-            index.push_back(current_face.indicies[0]);
-            index.push_back(first_second_index);
-            index.push_back(third_first_index);
-
-            new_faces.push_back(face {
-                { first, first_second, third_first },
-                { current_face.indicies[0], first_second_index, third_first_index }
-            });
-
-            //t2
-            index.push_back(first_second_index);
-            index.push_back(second_third_index);
-            index.push_back(third_first_index);
-
-            new_faces.push_back(face {
-                { first_second, second_third, third_first },
-                { first_second_index, second_third_index, third_first_index }
-            });
-
-            //t3
-            index.push_back(third_first_index);
-            index.push_back(second_third_index);
-            index.push_back(current_face.indicies[2]);
-
-            new_faces.push_back(face {
-                { third_first, second_third, third },
-                { third_first_index, second_third_index, current_face.indicies[2] }
-            });
-
-            //t4
-            index.push_back(first_second_index);
-            index.push_back(current_face.indicies[1]);
-            index.push_back(second_third_index);
-
-            new_faces.push_back(face {
-                { first_second, second, second_third },
-                { first_second_index, current_face.indicies[1], second_third_index }
-            });
-        }
-
-        faces.clear();
-        faces = new_faces;
+    for (int r = 0; r < 4; r++) {
+        subdivide();        
     }
 
 
@@ -155,6 +85,75 @@ icosphere::icosphere(std::shared_ptr<camera> camera) : object(camera) {
     scale_matrix = glm::scale(scale_matrix, glm::vec3(10.0f,10.0f,10.0f));
 }
 
+void icosphere::subdivide() {
+    index.clear();
+
+    std::vector<face> new_faces;
+
+    for (int i = 0; i < faces.size(); i++) {
+        auto current_face = faces[i];
+        auto first = current_face.points[0];
+        auto second = current_face.points[1];
+        auto third = current_face.points[2];
+
+        auto first_second = glm::normalize((first + second) / 2.0f); 
+        auto second_third = glm::normalize((second + third) / 2.0f); 
+        auto third_first = glm::normalize((third + first) / 2.0f); 
+
+        unsigned int latest_index = verts.size();
+        verts.push_back(first_second);
+        verts.push_back(second_third);
+        verts.push_back(third_first);
+
+        auto first_second_index = latest_index;
+        auto second_third_index = latest_index + 1;
+        auto third_first_index = latest_index + 2;
+
+        //t1
+        index.push_back(current_face.indicies[0]);
+        index.push_back(first_second_index);
+        index.push_back(third_first_index);
+
+        new_faces.push_back(face {
+            { first, first_second, third_first },
+            { current_face.indicies[0], first_second_index, third_first_index }
+        });
+
+        //t2
+        index.push_back(first_second_index);
+        index.push_back(second_third_index);
+        index.push_back(third_first_index);
+
+        new_faces.push_back(face {
+            { first_second, second_third, third_first },
+            { first_second_index, second_third_index, third_first_index }
+        });
+
+        //t3
+        index.push_back(third_first_index);
+        index.push_back(second_third_index);
+        index.push_back(current_face.indicies[2]);
+
+        new_faces.push_back(face {
+            { third_first, second_third, third },
+            { third_first_index, second_third_index, current_face.indicies[2] }
+        });
+
+        //t4
+        index.push_back(first_second_index);
+        index.push_back(current_face.indicies[1]);
+        index.push_back(second_third_index);
+
+        new_faces.push_back(face {
+            { first_second, second, second_third },
+            { first_second_index, current_face.indicies[1], second_third_index }
+        });
+    }
+
+    faces.clear();
+    faces = new_faces;
+}
+
 std::shared_ptr<float[]> icosphere::get_vertices() {
     return vertices;
 }
@@ -163,4 +162,26 @@ std::shared_ptr<unsigned int[]> icosphere::get_indices() {
 }
 std::shared_ptr<float[]> icosphere::get_normals() {
     return vertices;
+}
+
+void icosphere::on_draw_ui() {
+    ImGui::Text("Debug");
+    ImGui::Checkbox("Debug mesh", &debug_mesh);
+    ImGui::Checkbox("Debug normals", &debug_normals);
+    ImGui::Checkbox("Debug transparent", &debug_transparent);
+    ImGui::SliderFloat("Debug normal length", &debug_normal_length, 0.0f, 1.0f);
+
+    ImGui::Text("Lighting");
+
+    ImGui::SliderFloat("Ambient strength", &ambient_strength, 0.0f, 1.0f);
+    ImGui::SliderFloat("Specular strength", &specular_strength, 0.0f, 1.0f);
+    unsigned int min = 0;
+    unsigned int max = 256;
+    ImGui::SliderScalar("Specular exponent",ImGuiDataType_U32 ,&specular_exponent, &min, &max);
+    ImGui::SliderFloat3("Lighting direction", glm::value_ptr(light_direction), -1.0f, 1.0f);
+    
+}
+
+const char* icosphere::window_name() {
+    return "Icosphere";
 }

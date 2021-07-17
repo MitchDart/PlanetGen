@@ -48,7 +48,8 @@ class modules
             auto sphere = std::make_shared<icosphere>(main_camera);
 
             windowables = {
-                main_camera
+                main_camera,
+                sphere
             };
             drawables = {
                 //-------CAMERA-------

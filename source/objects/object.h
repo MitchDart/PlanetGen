@@ -38,18 +38,30 @@ class object : public drawable {
         glm::mat4 translation_matrix = glm::mat4(1.0f);
         glm::mat4 rotation_matrix = glm::mat4(1.0f);
 
+        glm::vec4 diffuse_color = glm::vec4(1.0f,0.0f,0.0f,1.0f);
+        unsigned int specular_exponent = 2;
+        float specular_strength = 0.4f;
+        float ambient_strength = 0.3f;
+        glm::vec3 light_direction = glm::vec3(1.0f,0.3f,0.4f);
+
+        bool debug_mesh = false;
+        bool debug_normals = false;
         bool debug_transparent = false;
+
+        glm::vec4 debug_normal_color = glm::vec4(1.0f,0.0f,0.0f,1.0f);
+        float debug_normal_length = 0.03f;
     private:
         void initilize_vao(); 
 
+        void draw_phong();
         void draw_debug_mesh();
         void draw_debug_normals();
         
         GLuint vao_handle;
 
-        shader_program debug_mesh;
-        shader_program debug_normals;
-
+        shader_program phong_shader;
+        shader_program debug_mesh_shader;
+        shader_program debug_normals_shader;
 };
 
 #endif

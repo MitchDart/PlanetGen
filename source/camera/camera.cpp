@@ -10,16 +10,14 @@ glm::mat4 camera::get_look_matrix() {
     return look_matrix;
 }
 
-void camera::look_at(glm::vec3 eye, glm::vec3 center, glm::vec3 up) {
-    look_matrix = glm::lookAt(eye, center, up);
-}
-
 void camera::update_window_size(int _width, int _height) {
     width = _width;
     height = _height;
 }
 
-void camera::on_create() {}
+void camera::on_create() {
+    camera_position = glm::vec3(0.0f,0.0f,-zoom);
+}
 
 void camera::on_draw() {}
 
@@ -47,7 +45,7 @@ void camera::on_update(double delta) {
         diff_mouse_y = diff_mouse_y/width;
 
         orbit_angle_x = orbit_start_angle_x + (2.0f * M_PI * diff_mouse_x * orbit_speed);
-        orbit_angle_y = std::min(M_PI/2.0f, std::max(-M_PI/2.0f ,orbit_start_angle_y + (2.0f * M_PI * diff_mouse_y * orbit_speed)));
+        orbit_angle_y = std::min(M_PI/2.0f - 0.1f, std::max(-M_PI/2.0f + 0.1f ,orbit_start_angle_y + (2.0f * M_PI * diff_mouse_y * orbit_speed)));
     } else {
         is_panning = false;
     }
@@ -57,7 +55,13 @@ void camera::on_update(double delta) {
     auto y_rotation_axis = glm::vec4(1.0f,0.0f,0.0f,0.0f) * x_rotation_matrix;
     auto y_rotation_matrix = glm::rotate(glm::mat4(1.0f), orbit_angle_y, glm::vec3(y_rotation_axis.x, y_rotation_axis.y, y_rotation_axis.z));
 
-    look_matrix = glm::lookAt(glm::vec3(0.0f,0.0f,-zoom), glm::vec3(0.0f,0.0f,0.0f), glm::vec3(0.0f,1.0f,0.0f)) * x_rotation_matrix * y_rotation_matrix;
+    camera_position = glm::vec4(0.0f,0.0f,-zoom,0.0f) * x_rotation_matrix * y_rotation_matrix;
+
+    look_matrix = glm::lookAt(camera_position, glm::vec3(0.0f,0.0f,0.0f), glm::vec3(0.0f,1.0f,0.0f));
+}
+
+glm::vec3 camera::get_camera_position() {
+    return camera_position;
 }
 
 void camera::on_destroy() {}

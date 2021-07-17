@@ -48,7 +48,7 @@ int main()
         primary_monitor_width,
         primary_monitor_height, 
         "Planet Generator", 
-        glfwGetPrimaryMonitor(),
+        nullptr,
         nullptr);
         
     if (!window)
