@@ -87,9 +87,6 @@ color_cube::color_cube(std::shared_ptr<camera> camera) : object(camera) {
 
     indices = array_indices;
 
-    vertex_count = 24;
-    index_count = 36;
-
     calc_norms();
 }
 
@@ -150,4 +147,17 @@ void color_cube::calc_norms() {
     }
 
     normals = array_normals;
+}
+
+unsigned int color_cube::get_start_vertex() {
+    return 0;
+}
+unsigned int color_cube::get_vertex_count() {
+    return vertex_count;
+}
+unsigned int color_cube::get_start_index() {
+    return 0;
+}
+unsigned int color_cube::get_index_count() {
+    return index_count;
 }

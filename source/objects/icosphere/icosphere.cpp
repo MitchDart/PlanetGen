@@ -55,11 +55,17 @@ icosphere::icosphere(std::shared_ptr<camera> camera) : object(camera) {
         };
     }
 
+    subdivision_index_count = std::vector<unsigned int>(0);
+    subdivision_vertex_count = std::vector<unsigned int>(0);
 
-    for (int r = 0; r < 4; r++) {
-        subdivide();        
+    subdivision_index_count.push_back(index.size());
+    subdivision_vertex_count.push_back(verts.size());
+
+    for (int r = 0; r < max_subdivision; r++) {
+        subdivide();
+        subdivision_index_count.push_back(index.size() - subdivision_index_count.at(r));
+        subdivision_vertex_count.push_back(verts.size());
     }
-
 
     std::shared_ptr<float[]> array_vert(new float[verts.size() * 3], [](const float* other) { delete[] other; });
 
@@ -79,15 +85,10 @@ icosphere::icosphere(std::shared_ptr<camera> camera) : object(camera) {
 
     indices = array_indices;
 
-    vertex_count = verts.size();
-    index_count = index.size();
-
     scale_matrix = glm::scale(scale_matrix, glm::vec3(10.0f,10.0f,10.0f));
 }
 
 void icosphere::subdivide() {
-    index.clear();
-
     std::vector<face> new_faces;
 
     for (int i = 0; i < faces.size(); i++) {
@@ -172,7 +173,6 @@ void icosphere::on_draw_ui() {
     ImGui::SliderFloat("Debug normal length", &debug_normal_length, 0.0f, 1.0f);
 
     ImGui::Text("Lighting");
-
     ImGui::SliderFloat("Ambient strength", &ambient_strength, 0.0f, 1.0f);
     ImGui::SliderFloat("Specular strength", &specular_strength, 0.0f, 1.0f);
     unsigned int min = 0;
@@ -180,8 +180,31 @@ void icosphere::on_draw_ui() {
     ImGui::SliderScalar("Specular exponent",ImGuiDataType_U32 ,&specular_exponent, &min, &max);
     ImGui::SliderFloat3("Lighting direction", glm::value_ptr(light_direction), -1.0f, 1.0f);
     
+    ImGui::Text("Tessellation");
+    unsigned int sub_div_min = 1;
+    unsigned int sub_div_max = max_subdivision;
+    ImGui::SliderScalar("CPU subdivision", ImGuiDataType_U32, &subdivision, &sub_div_min, &sub_div_max);
 }
 
 const char* icosphere::window_name() {
     return "Icosphere";
+}
+
+unsigned int icosphere::get_max_index_count() {
+    return subdivision_index_count.at(max_subdivision);
+}
+
+unsigned int icosphere::get_max_vertex_count() {
+    return subdivision_vertex_count.at(max_subdivision);
+}
+
+unsigned int icosphere::get_start_index() {
+    if(subdivision == 1) {
+        return 0;
+    }
+    return subdivision_index_count.at(subdivision - 2);
+}
+
+unsigned int icosphere::get_index_count() {
+    return subdivision_index_count.at(subdivision - 1);
 }

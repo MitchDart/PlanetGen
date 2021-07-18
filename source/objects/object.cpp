@@ -56,7 +56,7 @@ void object::draw_phong() {
 
     glBindVertexArray(vao_handle);
 
-    glDrawElements(GL_TRIANGLES, index_count, GL_UNSIGNED_INT, 0);
+    glDrawElements(GL_TRIANGLES, get_index_count(), GL_UNSIGNED_INT, (void*)(get_start_index() *sizeof(GLuint)));
 }
 
 void object::draw_debug_mesh() {
@@ -81,7 +81,7 @@ void object::draw_debug_mesh() {
         glDisable(GL_DEPTH_TEST);
     }
     
-    glDrawElements(GL_TRIANGLES, index_count, GL_UNSIGNED_INT, 0);
+    glDrawElements(GL_TRIANGLES, get_index_count(), GL_UNSIGNED_INT,  (void*)(get_start_index() *sizeof(GLuint)));
     
     glEnable(GL_CULL_FACE);  
     glEnable(GL_DEPTH_TEST);
@@ -102,7 +102,7 @@ void object::draw_debug_normals() {
     glUniformMatrix4fv(mvp_id, 1, GL_FALSE, glm::value_ptr(mvp));
 
     glBindVertexArray(vao_handle);
-    glDrawElements(GL_TRIANGLES, index_count, GL_UNSIGNED_INT, 0);
+    glDrawElements(GL_TRIANGLES, get_index_count(), GL_UNSIGNED_INT,  (void*)(get_start_index() *sizeof(GLuint)));
 }
         
 void object::on_destroy() {}
@@ -122,7 +122,7 @@ void object::initilize_vao() {
     glGenBuffers(1, &position_vbo_handle);
     
     glBindBuffer(GL_ARRAY_BUFFER, position_vbo_handle);
-    glBufferData(GL_ARRAY_BUFFER, vertex_count * 3 * sizeof(float), vertices.get(), GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, get_max_vertex_count() * 3 * sizeof(float), vertices.get(), GL_STATIC_DRAW);
 
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
     glEnableVertexAttribArray(0);  
@@ -132,7 +132,7 @@ void object::initilize_vao() {
     glGenBuffers(1, &normal_vbo_handle);
 
     glBindBuffer(GL_ARRAY_BUFFER, normal_vbo_handle);
-    glBufferData(GL_ARRAY_BUFFER, vertex_count * 3 * sizeof(float), normals.get(), GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, get_max_vertex_count() * 3 * sizeof(float), normals.get(), GL_STATIC_DRAW);
 
     glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
     glEnableVertexAttribArray(1);  
@@ -142,7 +142,7 @@ void object::initilize_vao() {
     glGenBuffers(1, &element_vbo_handle);
 
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, element_vbo_handle);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, index_count * sizeof(unsigned int), indices.get(), GL_STATIC_DRAW);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, get_max_index_count() * sizeof(unsigned int), indices.get(), GL_STATIC_DRAW);
 
     glBindVertexArray(0);
 }

@@ -30,8 +30,11 @@ class object : public drawable {
         virtual std::shared_ptr<float[]> get_normals() = 0;
         glm::mat4 get_model_matrix();
     protected:
-        int vertex_count;
-        int index_count;
+        virtual unsigned int get_max_index_count() = 0;
+        virtual unsigned int get_max_vertex_count() = 0;
+        virtual unsigned int get_start_index() = 0;
+        virtual unsigned int get_index_count() = 0;
+        
         std::shared_ptr<camera> main_camera;
 
         glm::mat4 scale_matrix = glm::mat4(1.0f);

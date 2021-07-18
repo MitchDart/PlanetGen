@@ -20,7 +20,14 @@ class color_cube : public object, public windowable {
         const char* window_name();
         void on_update(double delta) override;
     protected:
+        unsigned int get_start_vertex();
+        unsigned int get_vertex_count();
+        unsigned int get_start_index();
+        unsigned int get_index_count();
     private:
+        unsigned int vertex_count = 24;
+        unsigned int index_count = 36;
+
         std::shared_ptr<float[]> vertices;
         std::shared_ptr<unsigned int[]> indices;
         std::shared_ptr<float[]> normals;
