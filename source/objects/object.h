@@ -53,6 +53,8 @@ class object : public drawable {
 
         glm::vec4 debug_normal_color = glm::vec4(1.0f,0.0f,0.0f,1.0f);
         float debug_normal_length = 0.03f;
+
+        float height_noise_strength = 0.2f;
     private:
         void initilize_vao(); 
 

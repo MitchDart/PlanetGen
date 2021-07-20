@@ -3,7 +3,8 @@
 layout(triangles) in;
 layout(line_strip, max_vertices = 6) out;
 
-in vec3 normal_v[];
+in vec3 normal_raw_v[];
+in vec3 position_raw_v[];
 
 out vec4 color_f;
 
@@ -16,14 +17,14 @@ void main()
 {
     for(int i = 0; i < 3; i++ ) {
 
-        vec3 original_pos = gl_in[i].gl_Position.xyz;
+        vec3 original_pos = position_raw_v[i];
         
         gl_Position = matrix_mvp * vec4(original_pos, 1.0f);
         color_f = color;
 
         EmitVertex();
 
-        gl_Position = matrix_mvp * vec4(original_pos.xyz + (normal_v[i] * normal_length),1.0f);
+        gl_Position = matrix_mvp * vec4(original_pos.xyz + (normal_raw_v[i] * normal_length),1.0f);
 
         EmitVertex();
 

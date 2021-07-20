@@ -6,8 +6,8 @@ object::object(std::shared_ptr<camera> _main_camera) {
 
 void object::on_create() {
     initilize_vao();
-    debug_mesh_shader = shader_program("debug/debug_mesh_vertex.glsl","debug/debug_mesh_fragment.glsl", "debug/debug_mesh_geometry.glsl");
-    debug_normals_shader = shader_program("debug/debug_normal_vertex.glsl","debug/debug_normal_fragment.glsl", "debug/debug_normal_geometry.glsl");
+    debug_mesh_shader = shader_program("phong/phong_vertex.glsl","debug/debug_mesh_fragment.glsl", "debug/debug_mesh_geometry.glsl");
+    debug_normals_shader = shader_program("phong/phong_vertex.glsl","debug/debug_normal_fragment.glsl", "debug/debug_normal_geometry.glsl");
     phong_shader = shader_program("phong/phong_vertex.glsl", "phong/phong_fragment.glsl", nullptr);
 }
 
@@ -21,7 +21,6 @@ void object::on_draw() {
         }
     } 
 }
-
 
 void object::draw_phong() {
     phong_shader.use_program();
@@ -50,13 +49,16 @@ void object::draw_phong() {
     GLuint diffuse_color_handle = glGetUniformLocation(phong_shader.get_shader_program_handle(), "diffuse_color");
     glUniform4fv(diffuse_color_handle, 1, glm::value_ptr(diffuse_color));
 
+    GLuint height_noise_strength_handle = glGetUniformLocation(phong_shader.get_shader_program_handle(), "height_noise_strength");
+    glUniform1f(height_noise_strength_handle, height_noise_strength);
+
 
     glUniformMatrix4fv(mvp_id, 1, GL_FALSE, glm::value_ptr(mvp));
     glUniformMatrix4fv(m_id, 1, GL_FALSE, glm::value_ptr(get_model_matrix()));
 
     glBindVertexArray(vao_handle);
 
-    glDrawElements(GL_TRIANGLES, get_index_count(), GL_UNSIGNED_INT, (void*)(get_start_index() *sizeof(GLuint)));
+    glDrawElements(GL_TRIANGLES, get_index_count(), GL_UNSIGNED_INT, (void*)(get_start_index() *sizeof(unsigned int)));
 }
 
 void object::draw_debug_mesh() {
@@ -70,6 +72,9 @@ void object::draw_debug_mesh() {
     GLuint transparent_handle = glGetUniformLocation(debug_mesh_shader.get_shader_program_handle(), "transparent");
     glUniform1f(transparent_handle, !debug_transparent);
 
+    GLuint height_noise_strength_handle = glGetUniformLocation(debug_mesh_shader.get_shader_program_handle(), "height_noise_strength");
+    glUniform1f(height_noise_strength_handle, height_noise_strength);
+
     glUniformMatrix4fv(mvp_id, 1, GL_FALSE, glm::value_ptr(mvp));
     glUniformMatrix4fv(v_id, 1, GL_FALSE, glm::value_ptr(main_camera->get_look_matrix()));
     glUniformMatrix4fv(m_id, 1, GL_FALSE, glm::value_ptr(get_model_matrix()));
@@ -81,7 +86,7 @@ void object::draw_debug_mesh() {
         glDisable(GL_DEPTH_TEST);
     }
     
-    glDrawElements(GL_TRIANGLES, get_index_count(), GL_UNSIGNED_INT,  (void*)(get_start_index() *sizeof(GLuint)));
+    glDrawElements(GL_TRIANGLES, get_index_count(), GL_UNSIGNED_INT,  (void*)(get_start_index() *sizeof(unsigned int)));
     
     glEnable(GL_CULL_FACE);  
     glEnable(GL_DEPTH_TEST);
@@ -99,10 +104,13 @@ void object::draw_debug_normals() {
     GLuint normal_length = glGetUniformLocation(debug_normals_shader.get_shader_program_handle(), "normal_length");
     glUniform1f(normal_length, debug_normal_length);
 
+    GLuint height_noise_strength_handle = glGetUniformLocation(debug_normals_shader.get_shader_program_handle(), "height_noise_strength");
+    glUniform1f(height_noise_strength_handle, height_noise_strength);
+
     glUniformMatrix4fv(mvp_id, 1, GL_FALSE, glm::value_ptr(mvp));
 
     glBindVertexArray(vao_handle);
-    glDrawElements(GL_TRIANGLES, get_index_count(), GL_UNSIGNED_INT,  (void*)(get_start_index() *sizeof(GLuint)));
+    glDrawElements(GL_TRIANGLES, get_index_count(), GL_UNSIGNED_INT,  (void*)(get_start_index() * sizeof(unsigned int)));
 }
         
 void object::on_destroy() {}

@@ -63,7 +63,7 @@ icosphere::icosphere(std::shared_ptr<camera> camera) : object(camera) {
 
     for (int r = 0; r < max_subdivision; r++) {
         subdivide();
-        subdivision_index_count.push_back(index.size() - subdivision_index_count.at(r));
+        subdivision_index_count.push_back(20 * pow(4,r + 1) * 3);
         subdivision_vertex_count.push_back(verts.size());
     }
 
@@ -184,6 +184,9 @@ void icosphere::on_draw_ui() {
     unsigned int sub_div_min = 1;
     unsigned int sub_div_max = max_subdivision;
     ImGui::SliderScalar("CPU subdivision", ImGuiDataType_U32, &subdivision, &sub_div_min, &sub_div_max);
+
+    ImGui::Text("Height");
+    ImGui::SliderFloat("Noise strength", &height_noise_strength, 0.0f, 1.0f);
 }
 
 const char* icosphere::window_name() {
@@ -199,10 +202,13 @@ unsigned int icosphere::get_max_vertex_count() {
 }
 
 unsigned int icosphere::get_start_index() {
-    if(subdivision == 1) {
-        return 0;
+    unsigned int start_index = 0;
+
+    for(int i = 0; i < subdivision - 1; i++) {
+        start_index += subdivision_index_count.at(i);
     }
-    return subdivision_index_count.at(subdivision - 2);
+    
+    return start_index;
 }
 
 unsigned int icosphere::get_index_count() {

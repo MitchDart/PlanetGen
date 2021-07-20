@@ -80,6 +80,7 @@ void camera::on_draw_ui() {
 
 }
 
+
 void camera::on_input_init(GLFWwindow* _window) {
     window = _window;
 }
