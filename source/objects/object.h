@@ -55,6 +55,8 @@ class object : public drawable {
         float debug_normal_length = 0.03f;
 
         float height_noise_strength = 0.2f;
+
+        float normal_sample_distance = 0.1f;
     private:
         void initilize_vao(); 
 
@@ -70,3 +72,4 @@ class object : public drawable {
 };
 
 #endif
+

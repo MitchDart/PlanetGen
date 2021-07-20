@@ -187,6 +187,7 @@ void icosphere::on_draw_ui() {
 
     ImGui::Text("Height");
     ImGui::SliderFloat("Noise strength", &height_noise_strength, 0.0f, 1.0f);
+    ImGui::SliderFloat("Normal sample distance", &normal_sample_distance, 0.0f, 1.0f);
 }
 
 const char* icosphere::window_name() {

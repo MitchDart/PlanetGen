@@ -8,7 +8,7 @@ void object::on_create() {
     initilize_vao();
     debug_mesh_shader = shader_program("phong/phong_vertex.glsl","debug/debug_mesh_fragment.glsl", "debug/debug_mesh_geometry.glsl");
     debug_normals_shader = shader_program("phong/phong_vertex.glsl","debug/debug_normal_fragment.glsl", "debug/debug_normal_geometry.glsl");
-    phong_shader = shader_program("phong/phong_vertex.glsl", "phong/phong_fragment.glsl", nullptr);
+    phong_shader = shader_program("phong/phong_vertex.glsl", "phong/phong_fragment.glsl", "phong/phong_geometry.glsl");
 }
 
 void object::on_draw() {
@@ -21,6 +21,7 @@ void object::on_draw() {
         }
     } 
 }
+
 
 void object::draw_phong() {
     phong_shader.use_program();
@@ -52,6 +53,9 @@ void object::draw_phong() {
     GLuint height_noise_strength_handle = glGetUniformLocation(phong_shader.get_shader_program_handle(), "height_noise_strength");
     glUniform1f(height_noise_strength_handle, height_noise_strength);
 
+    GLuint normal_sample_distance_handle = glGetUniformLocation(phong_shader.get_shader_program_handle(), "normal_sample_distance");
+    glUniform1f(normal_sample_distance_handle, normal_sample_distance);
+
 
     glUniformMatrix4fv(mvp_id, 1, GL_FALSE, glm::value_ptr(mvp));
     glUniformMatrix4fv(m_id, 1, GL_FALSE, glm::value_ptr(get_model_matrix()));
@@ -60,6 +64,7 @@ void object::draw_phong() {
 
     glDrawElements(GL_TRIANGLES, get_index_count(), GL_UNSIGNED_INT, (void*)(get_start_index() *sizeof(unsigned int)));
 }
+
 
 void object::draw_debug_mesh() {
     debug_mesh_shader.use_program();
@@ -74,6 +79,9 @@ void object::draw_debug_mesh() {
 
     GLuint height_noise_strength_handle = glGetUniformLocation(debug_mesh_shader.get_shader_program_handle(), "height_noise_strength");
     glUniform1f(height_noise_strength_handle, height_noise_strength);
+
+    GLuint normal_sample_distance_handle = glGetUniformLocation(debug_mesh_shader.get_shader_program_handle(), "normal_sample_distance");
+    glUniform1f(normal_sample_distance_handle, normal_sample_distance);
 
     glUniformMatrix4fv(mvp_id, 1, GL_FALSE, glm::value_ptr(mvp));
     glUniformMatrix4fv(v_id, 1, GL_FALSE, glm::value_ptr(main_camera->get_look_matrix()));
@@ -106,6 +114,9 @@ void object::draw_debug_normals() {
 
     GLuint height_noise_strength_handle = glGetUniformLocation(debug_normals_shader.get_shader_program_handle(), "height_noise_strength");
     glUniform1f(height_noise_strength_handle, height_noise_strength);
+    
+    GLuint normal_sample_distance_handle = glGetUniformLocation(debug_normals_shader.get_shader_program_handle(), "normal_sample_distance");
+    glUniform1f(normal_sample_distance_handle, normal_sample_distance);
 
     glUniformMatrix4fv(mvp_id, 1, GL_FALSE, glm::value_ptr(mvp));
 
@@ -166,3 +177,4 @@ void object::rotate(float angle, glm::vec3 axis) {
 glm::mat4 object::get_model_matrix() {
     return translation_matrix * rotation_matrix * scale_matrix;
 }
+
