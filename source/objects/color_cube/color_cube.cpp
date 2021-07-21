@@ -122,7 +122,7 @@ void color_cube::calc_norms() {
 
     std::shared_ptr<float[]> array_normals(new float[vertex_count * 3], [](const float* other) { delete[] other; });
 
-    for (int i = 0; i < index_count; i += 3) {
+    for (unsigned int i = 0; i < index_count; i += 3) {
         unsigned int a_index = indices.get()[i] * 3;
         unsigned int b_index = indices.get()[i + 1] * 3;
         unsigned int c_index = indices.get()[i + 2] * 3;

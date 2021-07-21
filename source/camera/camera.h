@@ -39,8 +39,8 @@ class camera : public drawable, public inputable, public windowable {
         GLFWwindow* window;
         glm::mat4 look_matrix = glm::mat4(1.0f);
 
-        int width = 1.0f;
-        int height = 1.0f;
+        int width = 1;
+        int height = 1;
         float fov = glm::radians(60.0f);
         float near_clip = 0.1f;
         float far_clip = 100.0f;

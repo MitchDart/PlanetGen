@@ -45,7 +45,7 @@ void camera::on_update(double delta) {
         diff_mouse_y = diff_mouse_y/width;
 
         orbit_angle_x = orbit_start_angle_x + (2.0f * M_PI * diff_mouse_x * orbit_speed);
-        orbit_angle_y = std::min(M_PI/2.0f - 0.1f, std::max(-M_PI/2.0f + 0.1f ,orbit_start_angle_y + (2.0f * M_PI * diff_mouse_y * orbit_speed)));
+        orbit_angle_y = std::fmin(M_PI/2.0f - 0.1f, std::fmax(-M_PI/2.0f + 0.1f ,orbit_start_angle_y + (2.0f * M_PI * diff_mouse_y * orbit_speed)));
     } else {
         is_panning = false;
     }
