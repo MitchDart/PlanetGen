@@ -10,7 +10,7 @@
 #include "common/drawable.h"
 #include "modules.h"
 
-static const unsigned int TARGET_FPS = 144;
+static const unsigned int TARGET_FPS = 60;
 
 template <class clock, class duration>
 void sleep_until(std::chrono::time_point<clock, duration> tp)
@@ -37,12 +37,16 @@ int main()
     using framerate = duration<int, ratio<1, TARGET_FPS>>;
 
     glfwInit();
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 1);
+    glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+    
+    auto video_mode = glfwGetVideoMode(glfwGetPrimaryMonitor());
 
-    int primary_monitor_width = glfwGetVideoMode(glfwGetPrimaryMonitor())->width;
-    int primary_monitor_height = glfwGetVideoMode(glfwGetPrimaryMonitor())->height;
+    const int primary_monitor_refresh_rate = video_mode->refreshRate;
+    const int primary_monitor_width = video_mode->width;
+    const int primary_monitor_height = video_mode->height;
 
     GLFWwindow* window = glfwCreateWindow(
         primary_monitor_width,

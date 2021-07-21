@@ -19,5 +19,5 @@ macro(LinkIMGUI TARGET ACCESS)
     endif()
 
     target_include_directories(${TARGET} ${ACCESS} ${imgui_SOURCE_DIR})
-    target_link_libraries(${TARGET} ${ACCESS} imgui imm32)
+    target_link_libraries(${TARGET} ${ACCESS} imgui)
 endmacro()

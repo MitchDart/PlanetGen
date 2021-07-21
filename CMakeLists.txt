@@ -2,15 +2,6 @@ cmake_minimum_required(VERSION 3.11 FATAL_ERROR)
 project(OpenGLTemplate CXX)
 
 #===========================================================================================
-# OPTIONAL LIBRARiES
-#
-# The following libraries can be pulled down and added to the project by turnning the
-# desired options on. Open an issue for additional default support.
-# See: https://github.com/Hoshiningen/OpenGL-Template/issues
-
-set(ENABLE_ASSIMP   ON CACHE BOOL "Add Open Asset Import Library (assimp) to the project" FORCE)
-
-#===========================================================================================
 # GLAD CONFIGURATION
 #
 # Configure GLAD loader generation variables (lines below pulled from the GLAD top-level
@@ -19,7 +10,7 @@ set(ENABLE_ASSIMP   ON CACHE BOOL "Add Open Asset Import Library (assimp) to the
 
 set(GLAD_OUT_DIR        "${CMAKE_CURRENT_BINARY_DIR}" CACHE STRING "Output directory" FORCE)
 set(GLAD_PROFILE        "core" CACHE STRING "OpenGL profile" FORCE)
-set(GLAD_API            "gl=4.6" CACHE STRING "API type/version pairs, like \"gl=3.2,gles=\", no version means latest" FORCE)
+set(GLAD_API            "gl=4.1" CACHE STRING "API type/version pairs, like \"gl=3.2,gles=\", no version means latest" FORCE)
 set(GLAD_GENERATOR      "c" CACHE STRING "Language to generate the binding for" FORCE)
 set(GLAD_EXTENSIONS     "" CACHE STRING "Path to extensions file or comma separated list of extensions, if missing all extensions are included" FORCE)
 set(GLAD_SPEC           "gl" CACHE STRING "Name of the spec" FORCE)
@@ -72,12 +63,6 @@ if (OpenGL_FOUND)
     target_link_libraries(planet-gen PRIVATE ${OPENGL_LIBRARIES})
 else()
     message(FATAL_ERROR "OpenGL was not found on the system")
-endif()
-
-# Handle the optional libraries
-if (${ENABLE_ASSIMP})
-    include(${CMAKE_DIR}/LinkASSIMP.cmake)
-    LinkASSIMP(planet-gen PRIVATE)
 endif()
 
 # Enable C++20
