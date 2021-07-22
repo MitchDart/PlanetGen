@@ -170,6 +170,8 @@ void icosphere::on_draw_ui() {
     ImGui::Checkbox("Debug mesh", &debug_mesh);
     ImGui::Checkbox("Debug normals", &debug_normals);
     ImGui::Checkbox("Debug transparent", &debug_transparent);
+    ImGui::ColorEdit4("normal start color", debug_normal_color);
+    ImGui::ColorEdit4("normal end color", debug_normal_color_end);
     ImGui::SliderFloat("Debug normal length", &debug_normal_length, 0.0f, 1.0f);
 
     ImGui::Text("Lighting");

@@ -51,7 +51,8 @@ class object : public drawable {
         bool debug_normals = false;
         bool debug_transparent = false;
 
-        glm::vec4 debug_normal_color = glm::vec4(1.0f,0.0f,0.0f,1.0f);
+        float debug_normal_color[4] = {1.0f, 0, 0, 1.0f};
+        float debug_normal_color_end[4] = {0, 1.0f, 1.0f, 1.0f};
         float debug_normal_length = 0.03f;
 
         float height_noise_strength = 0.2f;

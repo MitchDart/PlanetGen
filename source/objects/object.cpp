@@ -107,7 +107,9 @@ void object::draw_debug_normals() {
     GLuint mvp_id = glGetUniformLocation(debug_normals_shader.get_shader_program_handle(), "matrix_mvp");
 
     GLuint color_handle = glGetUniformLocation(debug_normals_shader.get_shader_program_handle(), "color");
-    glUniform4fv(color_handle,1,glm::value_ptr(debug_normal_color));
+    glUniform4fv(color_handle, 1, glm::value_ptr(glm::vec4(debug_normal_color[0], debug_normal_color[1], debug_normal_color[2], debug_normal_color[3])));
+    GLuint end_color_handle = glGetUniformLocation(debug_normals_shader.get_shader_program_handle(), "color_end");
+    glUniform4fv(end_color_handle, 1, glm::value_ptr(glm::vec4(debug_normal_color_end[0], debug_normal_color_end[1], debug_normal_color_end[2], debug_normal_color_end[3])));
 
     GLuint normal_length = glGetUniformLocation(debug_normals_shader.get_shader_program_handle(), "normal_length");
     glUniform1f(normal_length, debug_normal_length);
