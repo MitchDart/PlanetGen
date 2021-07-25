@@ -23,7 +23,7 @@ void camera::on_draw() {}
 
 void camera::on_update(double delta) {
     int state = glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT);
-    if (state == GLFW_PRESS)
+    if (state == GLFW_PRESS && !ImGui::GetIO().WantCaptureMouse)
     {
         //Is clicking
         //get x distance from start of mouse click
