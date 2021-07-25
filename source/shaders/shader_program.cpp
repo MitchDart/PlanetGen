@@ -1,6 +1,6 @@
 #include "shader_program.h"        
         
-shader_program::shader_program(const char* vertex_shader, const char* fragment_shader, const char* geometry_shader) {
+shader_program::shader_program(const char* vertex_shader, const char* fragment_shader, const char* geometry_shader, const char* tcp_shader, const char* tes_shader) {
     shader_program_handle = glCreateProgram();
 
     if(vertex_shader != nullptr) {
@@ -16,6 +16,16 @@ shader_program::shader_program(const char* vertex_shader, const char* fragment_s
     if(geometry_shader != nullptr) {
         shader geometry(geometry_shader , GL_GEOMETRY_SHADER);
         glAttachShader(shader_program_handle, geometry.get_handle());
+    }
+
+    if(tcp_shader != nullptr) {
+        shader tcp(tcp_shader , GL_TESS_CONTROL_SHADER);
+        glAttachShader(shader_program_handle, tcp.get_handle());
+    }
+
+    if(tes_shader != nullptr) {
+        shader tes(tes_shader , GL_TESS_EVALUATION_SHADER);
+        glAttachShader(shader_program_handle, tes.get_handle());
     }
 
     glLinkProgram(shader_program_handle);

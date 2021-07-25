@@ -6,9 +6,9 @@ object::object(std::shared_ptr<camera> _main_camera) {
 
 void object::on_create() {
     initilize_vao();
-    debug_mesh_shader = shader_program("sphere_vertex.glsl","debug/debug_mesh_fragment.glsl", "debug/debug_mesh_geometry.glsl");
-    debug_normals_shader = shader_program("sphere_vertex.glsl","debug/debug_normal_fragment.glsl", "debug/debug_normal_geometry.glsl");
-    phong_shader = shader_program("sphere_vertex.glsl", "phong/phong_fragment.glsl", nullptr);
+    debug_mesh_shader = shader_program("sphere_vertex.glsl","debug/debug_mesh_fragment.glsl", "debug/debug_mesh_geometry.glsl", "sphere_tcs.glsl",  "sphere_tes.glsl");
+    debug_normals_shader = shader_program("sphere_vertex.glsl","debug/debug_normal_fragment.glsl", "debug/debug_normal_geometry.glsl", "sphere_tcs.glsl",  "sphere_tes.glsl");
+    phong_shader = shader_program("sphere_vertex.glsl", "phong/phong_fragment.glsl", nullptr, "sphere_tcs.glsl",  "sphere_tes.glsl");
 }
 
 void object::on_draw() {
@@ -26,17 +26,21 @@ void object::on_draw() {
 
 void object::draw_phong() {
     phong_shader.use_program();
+    
+    glPatchParameteri(GL_PATCH_VERTICES, 3);
 
     bind_uniforms(phong_shader);
 
     glBindVertexArray(vao_handle);
 
-    glDrawElements(GL_TRIANGLES, get_index_count(), GL_UNSIGNED_INT, (void*)(get_start_index() *sizeof(unsigned int)));
+    glDrawElements(GL_PATCHES, get_index_count(), GL_UNSIGNED_INT, (void*)(get_start_index() *sizeof(unsigned int)));
 }
 
 
 void object::draw_debug_mesh() {
     debug_mesh_shader.use_program();
+    
+    glPatchParameteri(GL_PATCH_VERTICES, 3);
 
     bind_uniforms(debug_mesh_shader);
 
@@ -47,7 +51,7 @@ void object::draw_debug_mesh() {
         glDisable(GL_DEPTH_TEST);
     }
     
-    glDrawElements(GL_TRIANGLES, get_index_count(), GL_UNSIGNED_INT,  (void*)(get_start_index() *sizeof(unsigned int)));
+    glDrawElements(GL_PATCHES, get_index_count(), GL_UNSIGNED_INT,  (void*)(get_start_index() *sizeof(unsigned int)));
     
     glEnable(GL_CULL_FACE);  
     glEnable(GL_DEPTH_TEST);
@@ -56,10 +60,12 @@ void object::draw_debug_mesh() {
 void object::draw_debug_normals() {
     debug_normals_shader.use_program();
 
+    glPatchParameteri(GL_PATCH_VERTICES, 3);
+
     bind_uniforms(debug_normals_shader);
 
     glBindVertexArray(vao_handle);
-    glDrawElements(GL_TRIANGLES, get_index_count(), GL_UNSIGNED_INT,  (void*)(get_start_index() * sizeof(unsigned int)));
+    glDrawElements(GL_PATCHES, get_index_count(), GL_UNSIGNED_INT,  (void*)(get_start_index() * sizeof(unsigned int)));
 }
 
 void object::bind_uniforms(shader_program shader) {
@@ -106,6 +112,13 @@ void object::bind_uniforms(shader_program shader) {
     
     GLuint debug_normal_end_color_handle = glGetUniformLocation(shader.get_shader_program_handle(), "debug_normal_end_color");
     glUniform4fv(debug_normal_end_color_handle, 1, glm::value_ptr(glm::vec4(debug_normal_end_color[0], debug_normal_end_color[1], debug_normal_end_color[2], debug_normal_end_color[3])));
+
+    GLuint tessellation_level_handle = glGetUniformLocation(shader.get_shader_program_handle(), "tessellation_level");
+    glUniform1ui(tessellation_level_handle, tessellation_level);
+
+    GLuint camera_tlv_handle = glGetUniformLocation(shader.get_shader_program_handle(), "camera_tlv");
+    glUniform1i(camera_tlv_handle, camera_tlv);
+
 
     glUniformMatrix4fv(mvp_id, 1, GL_FALSE, glm::value_ptr(mvp));
     glUniformMatrix4fv(v_id, 1, GL_FALSE, glm::value_ptr(main_camera->get_look_matrix()));

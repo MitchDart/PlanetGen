@@ -187,6 +187,11 @@ void icosphere::on_draw_ui() {
     unsigned int sub_div_max = max_subdivision;
     ImGui::SliderScalar("CPU subdivision", ImGuiDataType_U32, &subdivision, &sub_div_min, &sub_div_max);
 
+    unsigned int tess_min = 1;
+    unsigned int tess_max = max_tessellation_level;
+    ImGui::SliderScalar("GPU subdivision", ImGuiDataType_U32, &tessellation_level, &tess_min, &tess_max);
+    ImGui::Checkbox("Camera TLV", &camera_tlv);
+
     ImGui::Text("Height");
     ImGui::SliderFloat("Noise strength", &height_noise_strength, 0.0f, 1.0f);
     ImGui::SliderFloat("Normal sample distance", &normal_sample_distance, 0.0f, 0.3f);

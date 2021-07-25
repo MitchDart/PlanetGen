@@ -38,7 +38,7 @@ class icosphere : public object, public windowable {
         std::vector<unsigned int> index;
         std::vector<face> faces;
 
-        unsigned int subdivision = 5;
+        unsigned int subdivision = 4;
         unsigned int max_subdivision = 8;
 
         std::vector<unsigned int> subdivision_vertex_count;

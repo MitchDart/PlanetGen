@@ -42,7 +42,7 @@ class object : public drawable {
         glm::mat4 rotation_matrix = glm::mat4(1.0f);
 
         glm::vec4 diffuse_color = glm::vec4(1.0f,0.0f,0.0f,1.0f);
-        unsigned int specular_exponent = 2;
+        unsigned int specular_exponent = 4;
         float specular_strength = 0.4f;
         float ambient_strength = 0.3f;
         glm::vec3 light_direction = glm::vec3(1.0f,0.3f,0.4f);
@@ -58,6 +58,10 @@ class object : public drawable {
         float height_noise_strength = 0.2f;
 
         float normal_sample_distance = 0.05f;
+
+        unsigned int tessellation_level = 5;
+        unsigned int max_tessellation_level = 8;
+        bool camera_tlv = 0;
     private:
         void initilize_vao(); 
 
