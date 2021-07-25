@@ -14,6 +14,7 @@ uniform float ambient_strength;
 uniform vec4 diffuse_color;
 uniform uint specular_exponent;
 
+
 void main()
 {
     vec3 view_direction = normalize(camera_position - position);

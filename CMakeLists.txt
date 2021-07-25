@@ -34,12 +34,16 @@ set(includes ${HDRS})
 
 add_executable(planet-gen ${sources} ${includes})
 
-add_custom_command(
-         TARGET planet-gen POST_BUILD
-         COMMAND ${CMAKE_COMMAND} -E copy_directory              
-             ${CMAKE_SOURCE_DIR}/source/shaders/glsl $<TARGET_FILE_DIR:planet-gen>/glsl
-         COMMENT "Copying shaders" VERBATIM
-         )
+add_custom_target(
+        copy_shader_files
+        ${CMAKE_COMMAND}
+        -D SOURCE_DIR=${CMAKE_CURRENT_SOURCE_DIR}
+        -D DESTINATION_DIR=${CMAKE_CURRENT_BINARY_DIR} 
+        -P ${CMAKE_DIR}/CopyShaders.cmake
+        COMMENT "Copying Files for target: planet-gen" VERBATIM 
+        )
+
+add_dependencies (planet-gen copy_shader_files)
 
 # Perform dependency linkage
 include(${CMAKE_DIR}/LinkGLFW.cmake)

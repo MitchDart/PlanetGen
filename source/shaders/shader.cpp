@@ -2,8 +2,8 @@
 
 shader::shader(const char* file_name, GLenum shaderType) {
     name = std::string(file_name);
-    std::ifstream in(std::string("glsl/") + name);
-    std::string contents((std::istreambuf_iterator<char>(in)),std::istreambuf_iterator<char>());
+
+    std::string contents = load_file(std::string("glsl/") + name);
 
     if(contents.empty()) {
         std::cout << "Shader: " << name << " empty"; 
@@ -34,6 +34,47 @@ shader::~shader() {
     shader_handle = 0;
 
     std::cout << "Shader destroyed: " << name << std::endl;
+}
+
+std::string shader::load_file(std::string path) {
+    std::string include_identifier = "#include ";
+    static bool is_recursive = false;
+
+    std::string source = "";
+    std::ifstream file(path);
+
+    if (!file.is_open())
+    {
+        std::cerr << "ERROR: could not open the shader at: " << path << "\n" << std::endl;
+        return source;
+    }
+
+    std::string line_buffer;
+    while (std::getline(file, line_buffer))
+    {
+        if (line_buffer.find(include_identifier) != line_buffer.npos)
+        {
+            line_buffer.erase(0, include_identifier.size());
+
+            size_t found = path.find_last_of("/\\");
+            auto path_without_file = path.substr(0, found + 1);
+            line_buffer.insert(0, path_without_file);
+
+            is_recursive = true;
+            source += load_file(line_buffer);
+
+            continue;
+        }
+
+        source += line_buffer + '\n';
+    }
+
+    if (!is_recursive)
+        source += '\0';
+
+    file.close();
+
+    return source;
 }
 
 GLuint shader::get_handle() {

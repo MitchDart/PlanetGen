@@ -15,6 +15,8 @@ class shader {
         GLuint get_handle();
     protected:
     private:
+        std::string load_file(std::string path);
+
         std::string name;
         GLuint shader_handle;
 };
