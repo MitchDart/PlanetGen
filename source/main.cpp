@@ -10,7 +10,7 @@
 #include "common/drawable.h"
 #include "modules.h"
 
-static const unsigned int TARGET_FPS = 60;
+static const unsigned int TARGET_FPS = 144;
 
 template <class clock, class duration>
 void sleep_until(std::chrono::time_point<clock, duration> tp)

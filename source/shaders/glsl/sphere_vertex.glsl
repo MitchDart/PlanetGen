@@ -16,7 +16,7 @@ uniform float normal_sample_distance;
 
 #define PI 3.1415926538
 
-#include ../util/noise.glsl
+#include util/noise.glsl
 
 vec3 point_height(vec3 unit_sphere_vector) {
     vec3 position = normalize(unit_sphere_vector);

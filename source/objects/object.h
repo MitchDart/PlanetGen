@@ -51,15 +51,17 @@ class object : public drawable {
         bool debug_normals = false;
         bool debug_transparent = false;
 
-        float debug_normal_color[4] = {1.0f, 0, 0, 1.0f};
-        float debug_normal_color_end[4] = {0, 1.0f, 1.0f, 1.0f};
+        float debug_normal_start_color[4] = {0.559f, 0.0f, 1.0f, 1.0f};
+        float debug_normal_end_color[4] = {0, 1.0f, 0.088f, 1.0f};
         float debug_normal_length = 0.03f;
 
         float height_noise_strength = 0.2f;
 
-        float normal_sample_distance = 0.1f;
+        float normal_sample_distance = 0.05f;
     private:
         void initilize_vao(); 
+
+        void bind_uniforms(shader_program);
 
         void draw_phong();
         void draw_debug_mesh();

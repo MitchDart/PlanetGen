@@ -170,15 +170,15 @@ void icosphere::on_draw_ui() {
     ImGui::Checkbox("Debug mesh", &debug_mesh);
     ImGui::Checkbox("Debug normals", &debug_normals);
     ImGui::Checkbox("Debug transparent", &debug_transparent);
-    ImGui::ColorEdit4("normal start color", debug_normal_color);
-    ImGui::ColorEdit4("normal end color", debug_normal_color_end);
+    ImGui::ColorEdit4("Debug normal start color", debug_normal_start_color);
+    ImGui::ColorEdit4("Debug normal end color", debug_normal_end_color);
     ImGui::SliderFloat("Debug normal length", &debug_normal_length, 0.0f, 1.0f);
 
     ImGui::Text("Lighting");
     ImGui::SliderFloat("Ambient strength", &ambient_strength, 0.0f, 1.0f);
     ImGui::SliderFloat("Specular strength", &specular_strength, 0.0f, 1.0f);
     unsigned int min = 0;
-    unsigned int max = 256;
+    unsigned int max = 64;
     ImGui::SliderScalar("Specular exponent",ImGuiDataType_U32 ,&specular_exponent, &min, &max);
     ImGui::SliderFloat3("Lighting direction", glm::value_ptr(light_direction), -1.0f, 1.0f);
     
@@ -189,7 +189,7 @@ void icosphere::on_draw_ui() {
 
     ImGui::Text("Height");
     ImGui::SliderFloat("Noise strength", &height_noise_strength, 0.0f, 1.0f);
-    ImGui::SliderFloat("Normal sample distance", &normal_sample_distance, 0.0f, 1.0f);
+    ImGui::SliderFloat("Normal sample distance", &normal_sample_distance, 0.0f, 0.3f);
 }
 
 const char* icosphere::window_name() {
