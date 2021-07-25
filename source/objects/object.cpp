@@ -119,6 +119,11 @@ void object::bind_uniforms(shader_program shader) {
     GLuint camera_tlv_handle = glGetUniformLocation(shader.get_shader_program_handle(), "camera_tlv");
     glUniform1i(camera_tlv_handle, camera_tlv);
 
+    GLuint noise_scale_handle = glGetUniformLocation(shader.get_shader_program_handle(), "noise_scale");
+    glUniform1f(noise_scale_handle, noise_scale);
+
+    GLuint noise_position_handle = glGetUniformLocation(shader.get_shader_program_handle(), "noise_position");
+    glUniform1f(noise_position_handle, noise_position);
 
     glUniformMatrix4fv(mvp_id, 1, GL_FALSE, glm::value_ptr(mvp));
     glUniformMatrix4fv(v_id, 1, GL_FALSE, glm::value_ptr(main_camera->get_look_matrix()));

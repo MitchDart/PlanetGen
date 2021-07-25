@@ -14,13 +14,17 @@ uniform mat4 matrix_mvp;
 uniform float height_noise_strength;
 uniform float normal_sample_distance;
 
+uniform float noise_scale;
+uniform float noise_position;
+
 #define PI 3.1415926538
 
 #include util/noise.glsl
 
 vec3 point_height(vec3 unit_sphere_vector) {
     vec3 position = normalize(unit_sphere_vector);
-    position = position + (position * height_noise_strength * snoise(unit_sphere_vector));
+    float height = height_noise_strength * snoise((position + vec3(noise_position, noise_position, noise_position)) * noise_scale);
+    position = position + (position * height);
     return position;
 }
 

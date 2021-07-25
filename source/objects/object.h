@@ -54,14 +54,14 @@ class object : public drawable {
         float debug_normal_start_color[4] = {0.559f, 0.0f, 1.0f, 1.0f};
         float debug_normal_end_color[4] = {0, 1.0f, 0.088f, 1.0f};
         float debug_normal_length = 0.03f;
-
         float height_noise_strength = 0.2f;
-
         float normal_sample_distance = 0.05f;
-
         unsigned int tessellation_level = 5;
         unsigned int max_tessellation_level = 8;
         bool camera_tlv = 0;
+
+        float noise_scale = 1.0f;
+        float noise_position = 0.0f;
     private:
         void initilize_vao(); 
 
