@@ -108,29 +108,31 @@ float atan2(in float y, in float x)
 void main()
 {
     float radius = 1.0f;
-    float inclination = atan2(sqrt((vertex_position_in.x * vertex_position_in.x) + (vertex_position_in.y * vertex_position_in.y)), vertex_position_in.z);
-    float azimuth = atan2(vertex_position_in.y, vertex_position_in.x);
+    float inclination = atan2(sqrt((vertex_position_in.x * vertex_position_in.x) + (vertex_position_in.z * vertex_position_in.z)), vertex_position_in.y);
+    float azimuth = atan2(vertex_position_in.z, vertex_position_in.x);
 
-    float sample_incl_top = inclination + normal_sample_distance;
-    float sample_incl_bottom = inclination + normal_sample_distance;
+    float sample_incl_top = max(0.0f, inclination - normal_sample_distance);
+    float sample_incl_bottom = min(PI, inclination + normal_sample_distance);
 
-    float sample_azi_left = azimuth + normal_sample_distance;
+    float sample_azi_left = azimuth - normal_sample_distance;
     float sample_azi_right = azimuth + normal_sample_distance;
 
-    vec3 sample_top = point_height(vec3(radius * cos(azimuth) * sin(sample_incl_top), radius * sin(azimuth) * sin(sample_incl_top), radius * cos(sample_incl_top)));
-    vec3 sample_bottom = point_height(vec3(radius * cos(azimuth) * sin(sample_incl_bottom), radius * sin(azimuth) * sin(sample_incl_bottom), radius * cos(sample_incl_bottom)));
-    vec3 sample_left = point_height(vec3(radius * cos(sample_azi_left) * sin(inclination), radius * sin(sample_azi_left) * sin(inclination), radius * cos(inclination)));
-    vec3 sample_right = point_height(vec3(radius * cos(sample_azi_right) * sin(inclination), radius * sin(sample_azi_right) * sin(inclination), radius * cos(inclination)));
+    vec3 sample_top = point_height(vec3(radius * cos(azimuth) * sin(sample_incl_top), radius * cos(sample_incl_top), radius * sin(azimuth) * sin(sample_incl_top)));
+    vec3 sample_bottom = point_height(vec3(radius * cos(azimuth) * sin(sample_incl_bottom), radius * cos(sample_incl_bottom), radius * sin(azimuth) * sin(sample_incl_bottom)));
+    vec3 sample_left = point_height(vec3(radius * cos(sample_azi_left) * sin(inclination), radius * cos(inclination), radius * sin(sample_azi_left) * sin(inclination)));
+    vec3 sample_right = point_height(vec3(radius * cos(sample_azi_right) * sin(inclination), radius * cos(inclination), radius * sin(sample_azi_right) * sin(inclination)));
 
-    vec3 normal_sample_top = normalize(cross(sample_top - vertex_position_in, sample_left - vertex_position_in));
-    vec3 normal_sample_bottom = normalize(cross(sample_bottom - vertex_position_in, sample_right - vertex_position_in));
+    vec3 normal_sample_top_left = cross(sample_left - vertex_position_in, sample_top - vertex_position_in);
+    vec3 normal_sample_top_right = cross(sample_top - vertex_position_in, sample_right - vertex_position_in);
+    vec3 normal_sample_bottom_left = cross(sample_bottom - vertex_position_in, sample_left - vertex_position_in);
+    vec3 normal_sample_bottom_right = cross(sample_right - vertex_position_in, sample_bottom - vertex_position_in);
 
-    vec3 normal_average = (normal_sample_top + normal_sample_bottom)/2.0f;
+    vec3 normal_average = (normal_sample_top_left + normal_sample_top_right + normal_sample_bottom_left + normal_sample_bottom_right)/4.0f;
 
     vec3 vertex_position = point_height(vertex_position_in);
 
     position_raw_v = vertex_position;
-    normal_raw_v = normal_sample_top;
+    normal_raw_v = normalize(normal_average);
 
     position_v = (matrix_m * vec4(vertex_position, 1.0f)).xyz;
     normal_v = normalize(matrix_m * vec4(normal_raw_v, 0.0f)).xyz;
