@@ -45,7 +45,9 @@ class object : public drawable {
         unsigned int specular_exponent = 4;
         float specular_strength = 0.4f;
         float ambient_strength = 0.3f;
+
         glm::vec3 light_direction = glm::vec3(1.0f,0.3f,0.4f);
+        glm::mat4 light_matrix = glm::mat4(1.0f);
 
         bool debug_mesh = false;
         bool debug_normals = false;
@@ -62,20 +64,27 @@ class object : public drawable {
 
         float noise_scale = 1.0f;
         float noise_position = 0.0f;
+
+        const unsigned int shadow_map_height = 1024, shadow_map_width = 1024;
     private:
         void initilize_vao(); 
+        void initilize_shadow_map();
 
         void bind_uniforms(shader_program);
 
         void draw_phong();
         void draw_debug_mesh();
         void draw_debug_normals();
+        void draw_shadow_map();
         
         GLuint vao_handle;
+        GLuint fbo_depth_handle;
+        GLuint depth_texture_handle;
 
         shader_program phong_shader;
         shader_program debug_mesh_shader;
         shader_program debug_normals_shader;
+        shader_program shadow_shader;
 };
 
 #endif
