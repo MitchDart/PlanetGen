@@ -24,11 +24,22 @@ float calc_shadow(vec4 position) {
     //[-1,1] -> [0,1]
     projected_coords = projected_coords * 0.5f + 0.5f;
 
-    //r get first value (ie depth)
-    float closest_depth = texture(shadow_map, projected_coords.xy).r;
+    float bias = max(0.05 * (1.0 - dot(normal_v, light_direction)), 0.005);  
+
     float current_depth = projected_coords.z;
 
-    float shadow = current_depth > closest_depth  ? 1.0 : 0.0;  
+    float shadow = 0.0f;
+    vec2 texel_size = 1.0 / textureSize(shadow_map, 0);
+    for(int x = -1; x <= 1; ++x)
+    {
+        for(int y = -1; y <= 1; ++y)
+        {
+            float pcf = texture(shadow_map, projected_coords.xy + vec2(x, y) * texel_size).r; 
+            shadow += current_depth - bias > pcf ? 1.0 : 0.0;        
+        }    
+    }
+    shadow /= 9.0;
+
     return shadow;
 }
 
@@ -43,8 +54,8 @@ void main()
     vec3 ambient = diffuse_color.xyz * ambient_strength;
     vec3 diffuse = diffuse_color.xyz * diffuse_ratio;
     vec3 specular = specular_ratio * specular_strength * vec3(1.0f,1.0f,1.0f);
-    float shadow = 0.0f;//calc_shadow(light_v);
+    float shadow = calc_shadow(light_v);
 
-    vec3 result = ambient + (1 - shadow) * (diffuse + specular);
+    vec3 result =  ambient + (1 - shadow) * (diffuse + specular);
     fragment_color = vec4(result, diffuse_color.a);
 }

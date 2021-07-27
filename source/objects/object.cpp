@@ -29,6 +29,7 @@ void object::on_draw() {
 
 
 void object::draw_phong() {
+    
     phong_shader.use_program();
     
     glPatchParameteri(GL_PATCH_VERTICES, 3);
@@ -195,6 +196,7 @@ glm::mat4 object::get_model_matrix() {
 
 void object::initilize_shadow_map() {
     glGenFramebuffers(1, &fbo_depth_handle);
+    glBindFramebuffer(GL_FRAMEBUFFER, fbo_depth_handle);
 
     glGenTextures(1, &depth_texture_handle);
     glBindTexture(GL_TEXTURE_2D, depth_texture_handle);
@@ -204,15 +206,15 @@ void object::initilize_shadow_map() {
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 
-    glBindFramebuffer(GL_FRAMEBUFFER, fbo_depth_handle);
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, depth_texture_handle, 0);
     glDrawBuffer(GL_NONE);
     glReadBuffer(GL_NONE);
+    
     glBindFramebuffer(GL_FRAMEBUFFER,0);
 
     auto normalized_light_direction = glm::normalize(light_direction);
-    auto light_look_matrix = glm::lookAt(-normalized_light_direction * 100.0f, glm::vec3(0.0f,0.0f,0.0f), glm::vec3(0.0f,1.0f,0.0f));
-    auto light_projection_matrix = glm::ortho(-100.0f, 100.0f, -100.0f, 100.0f, -100.0f, 100.0f);
+    auto light_look_matrix = glm::lookAt(normalized_light_direction, glm::vec3(0.0f,0.0f,0.0f), glm::vec3(0.0f,1.0f,0.0f));
+    auto light_projection_matrix = glm::ortho(-15.0f, 15.0f, -15.0f, 15.0f, -20.0f, 20.0f);
     light_matrix = light_projection_matrix * light_look_matrix;
 }
 
@@ -228,11 +230,12 @@ void object::draw_shadow_map() {
     
     glPatchParameteri(GL_PATCH_VERTICES, 3);
 
-    bind_uniforms(debug_normals_shader);
+    bind_uniforms(shadow_shader);
 
     glBindVertexArray(vao_handle);
-    glDrawElements(GL_PATCHES, get_index_count(), GL_UNSIGNED_INT,  (void*)(get_start_index() * sizeof(unsigned int)));
 
+    glDrawElements(GL_PATCHES, get_index_count(), GL_UNSIGNED_INT,  (void*)(get_start_index() * sizeof(unsigned int)));
+    
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
     glViewport(original_viewport[0], original_viewport[1], original_viewport[2], original_viewport[3]);
 }

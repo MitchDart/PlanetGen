@@ -65,7 +65,7 @@ class object : public drawable {
         float noise_scale = 1.0f;
         float noise_position = 0.0f;
 
-        const unsigned int shadow_map_height = 1024, shadow_map_width = 1024;
+        const unsigned int shadow_map_height = 2048, shadow_map_width = 2048;
     private:
         void initilize_vao(); 
         void initilize_shadow_map();
