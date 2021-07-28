@@ -2,7 +2,12 @@
 #define _SHADER_H
 
 #include <iostream>
+//Macro for checking if using Microsoft Visual C++
+#ifdef _MSC_VER
+#include <string>
+#elif !_MSC_VER
 #include <cstring>
+#endif
 #include <fstream>
 
 #include <glad/glad.h>

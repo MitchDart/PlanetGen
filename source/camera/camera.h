@@ -6,6 +6,10 @@
 #include <memory>
 #include <iostream>
 
+//Macro for checking if using Microsoft Visual C++
+#ifdef _MSC_VER
+#include <algorithm>
+#endif
 #include <math.h>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
