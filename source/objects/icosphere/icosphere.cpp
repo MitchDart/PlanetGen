@@ -197,6 +197,10 @@ void icosphere::on_draw_ui() {
     ImGui::SliderFloat("Noise scale", &noise_scale, 1.0f, 10.0f);
     ImGui::SliderFloat("Noise position", &noise_position, 0.0f, 1.0f);
     ImGui::SliderFloat("Normal sample distance", &normal_sample_distance, 0.0f, 0.3f);
+
+    ImGui::Text("Shadow");
+    ImGui::SliderFloat("Bias min", &shadow_bias_min, 0.0f, 0.1f);
+    ImGui::SliderFloat("Bias max", &shadow_bias_max, 0.0f, 0.1f);
 }
 
 const char* icosphere::window_name() {

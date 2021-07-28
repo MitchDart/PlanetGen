@@ -1,4 +1,4 @@
-#version 410 core
+#version 410
 
 layout(triangles, equal_spacing, ccw) in;
 
@@ -8,9 +8,11 @@ out vec3 position_v;
 out vec3 normal_v;
 out vec3 position_raw_v;
 out vec3 normal_raw_v;
+out vec4 light_v;
 
 uniform mat4 matrix_m;
 uniform mat4 matrix_mvp;
+uniform mat4 matrix_light;
 uniform float height_noise_strength;
 uniform float normal_sample_distance;
 
@@ -23,7 +25,7 @@ uniform float noise_position;
 
 vec3 point_height(vec3 unit_sphere_vector) {
     vec3 position = normalize(unit_sphere_vector);
-    float height = height_noise_strength * snoise((position + vec3(noise_position, noise_position, noise_position)) * noise_scale);
+    float height = height_noise_strength * cnoise((position + vec3(noise_position, noise_position, noise_position)) * noise_scale);
     position = position + (position * height);
     return position;
 }
@@ -80,6 +82,8 @@ void main()
 
     position_raw_v = point_height(position_raw_v);
     position_v = (matrix_m * vec4(position_raw_v, 1.0f)).xyz;
+    
+    light_v = matrix_light * vec4(position_v, 1.0f);
 
     gl_Position = matrix_mvp * vec4(position_raw_v, 1.0f);
 }

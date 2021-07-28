@@ -42,10 +42,12 @@ class object : public drawable {
         glm::mat4 rotation_matrix = glm::mat4(1.0f);
 
         glm::vec4 diffuse_color = glm::vec4(1.0f,0.0f,0.0f,1.0f);
-        unsigned int specular_exponent = 4;
-        float specular_strength = 0.4f;
+        unsigned int specular_exponent = 6;
+        float specular_strength = 0.5f;
         float ambient_strength = 0.3f;
+
         glm::vec3 light_direction = glm::vec3(1.0f,0.3f,0.4f);
+        glm::mat4 light_matrix = glm::mat4(1.0f);
 
         bool debug_mesh = false;
         bool debug_normals = false;
@@ -56,26 +58,35 @@ class object : public drawable {
         float debug_normal_length = 0.03f;
         float height_noise_strength = 0.2f;
         float normal_sample_distance = 0.05f;
-        unsigned int tessellation_level = 5;
-        unsigned int max_tessellation_level = 8;
+        unsigned int tessellation_level = 40;
+        unsigned int max_tessellation_level = 50;
         bool camera_tlv = 0;
 
         float noise_scale = 1.0f;
         float noise_position = 0.0f;
+
+        const unsigned int shadow_map_height = 2048, shadow_map_width = 2048;
+        float shadow_bias_min = 0.005;
+        float shadow_bias_max = 0.012;
     private:
         void initilize_vao(); 
+        void initilize_shadow_map();
 
         void bind_uniforms(shader_program);
 
         void draw_phong();
         void draw_debug_mesh();
         void draw_debug_normals();
+        void draw_shadow_map();
         
         GLuint vao_handle;
+        GLuint fbo_depth_handle;
+        GLuint depth_texture_handle;
 
         shader_program phong_shader;
         shader_program debug_mesh_shader;
         shader_program debug_normals_shader;
+        shader_program shadow_shader;
 };
 
 #endif
