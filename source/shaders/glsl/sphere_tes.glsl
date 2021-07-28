@@ -25,7 +25,7 @@ uniform float noise_position;
 
 vec3 point_height(vec3 unit_sphere_vector) {
     vec3 position = normalize(unit_sphere_vector);
-    float height = height_noise_strength * snoise((position + vec3(noise_position, noise_position, noise_position)) * noise_scale);
+    float height = height_noise_strength * cnoise((position + vec3(noise_position, noise_position, noise_position)) * noise_scale);
     position = position + (position * height);
     return position;
 }

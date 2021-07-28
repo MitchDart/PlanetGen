@@ -16,6 +16,8 @@ uniform vec4 diffuse_color;
 uniform uint specular_exponent;
 
 uniform sampler2D shadow_map;
+uniform float shadow_bias_min;
+uniform float shadow_bias_max;
 
 float calc_shadow(vec4 position) {
     //This is some funky stuff. Need more reading. NVM not needed for ortho
@@ -24,7 +26,7 @@ float calc_shadow(vec4 position) {
     //[-1,1] -> [0,1]
     projected_coords = projected_coords * 0.5f + 0.5f;
 
-    float bias = max(0.05 * (1.0 - dot(normal_v, light_direction)), 0.005);  
+    float bias = max(shadow_bias_max * (1.0 - dot(normal_v, light_direction)), shadow_bias_min);  
 
     float current_depth = projected_coords.z;
 

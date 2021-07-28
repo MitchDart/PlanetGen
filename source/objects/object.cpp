@@ -135,6 +135,12 @@ void object::bind_uniforms(shader_program shader) {
     GLuint light_matrix_handle = glGetUniformLocation(shader.get_shader_program_handle(), "matrix_light");
     glUniformMatrix4fv(light_matrix_handle, 1, GL_FALSE, glm::value_ptr(light_matrix));
 
+    GLuint shadow_bias_min_handle = glGetUniformLocation(shader.get_shader_program_handle(), "shadow_bias_min");
+    glUniform1f(shadow_bias_min_handle, shadow_bias_min);
+
+    GLuint shadow_bias_max_handle = glGetUniformLocation(shader.get_shader_program_handle(), "shadow_bias_max");
+    glUniform1f(shadow_bias_max_handle, shadow_bias_max);
+
     glUniformMatrix4fv(mvp_id, 1, GL_FALSE, glm::value_ptr(mvp));
     glUniformMatrix4fv(v_id, 1, GL_FALSE, glm::value_ptr(main_camera->get_look_matrix()));
     glUniformMatrix4fv(m_id, 1, GL_FALSE, glm::value_ptr(get_model_matrix()));
@@ -214,7 +220,7 @@ void object::initilize_shadow_map() {
 
     auto normalized_light_direction = glm::normalize(light_direction);
     auto light_look_matrix = glm::lookAt(normalized_light_direction, glm::vec3(0.0f,0.0f,0.0f), glm::vec3(0.0f,1.0f,0.0f));
-    auto light_projection_matrix = glm::ortho(-15.0f, 15.0f, -15.0f, 15.0f, -20.0f, 20.0f);
+    auto light_projection_matrix = glm::ortho(-15.0f, 15.0f, -15.0f, 15.0f, -15.0f, 15.0f);
     light_matrix = light_projection_matrix * light_look_matrix;
 }
 
