@@ -148,7 +148,10 @@ void object::bind_uniforms(shader_program shader) {
         
 void object::on_destroy() {}
 
-void object::on_update(double delta) {}
+void object::on_update(double delta) {
+    //We update the light matrix on each frame update so that the shadows are recalculated correctly
+    update_light_matrix();
+}
 
 void object::initilize_vao() {
     auto vertices = get_vertices();
@@ -217,7 +220,10 @@ void object::initilize_shadow_map() {
     glReadBuffer(GL_NONE);
     
     glBindFramebuffer(GL_FRAMEBUFFER,0);
+    update_light_matrix();
+}
 
+void object::update_light_matrix() {
     auto normalized_light_direction = glm::normalize(light_direction);
     auto light_look_matrix = glm::lookAt(normalized_light_direction, glm::vec3(0.0f,0.0f,0.0f), glm::vec3(0.0f,1.0f,0.0f));
     auto light_projection_matrix = glm::ortho(-15.0f, 15.0f, -15.0f, 15.0f, -15.0f, 15.0f);

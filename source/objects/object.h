@@ -78,6 +78,7 @@ class object : public drawable {
         void draw_debug_mesh();
         void draw_debug_normals();
         void draw_shadow_map();
+        void update_light_matrix();
         
         GLuint vao_handle;
         GLuint fbo_depth_handle;
