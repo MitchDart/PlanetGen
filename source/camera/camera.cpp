@@ -88,3 +88,11 @@ void camera::on_input_init(GLFWwindow* _window) {
 void camera::on_scroll(double x ,double y) {
     zoom = std::min(zoom + ((float)y*zoom_speed), -1.0f);
 }
+
+int camera::window_width() {
+    return width;
+}
+
+int camera::window_height() {
+    return height;
+}

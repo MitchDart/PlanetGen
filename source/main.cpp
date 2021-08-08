@@ -87,6 +87,8 @@ int main()
 
     modules::getInstance().resolve(window);
 
+    modules::getInstance().main_camera->update_window_size(primary_monitor_width,primary_monitor_height);
+
     for (auto drawable : modules::getInstance().drawables) 
     {  
         drawable->on_create();
@@ -96,8 +98,6 @@ int main()
     {  
         inputable->on_input_init(window);
     }
-
-    modules::getInstance().main_camera->update_window_size(primary_monitor_width,primary_monitor_height);
 
     auto prev_frame_time = system_clock::now();
     auto next_frame_time = prev_frame_time + framerate{1};

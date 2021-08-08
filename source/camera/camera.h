@@ -38,6 +38,10 @@ class camera : public drawable, public inputable, public windowable {
 
         glm::vec3 get_camera_position();
         void update_window_size(int, int);
+        int window_width();
+        int window_height();
+
+
     protected:
     private:
         GLFWwindow* window;

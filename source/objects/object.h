@@ -29,11 +29,11 @@ class object : public drawable {
         virtual std::shared_ptr<unsigned int[]> get_indices() = 0;
         virtual std::shared_ptr<float[]> get_normals() = 0;
         glm::mat4 get_model_matrix();
+        virtual unsigned int get_start_index() = 0;
+        virtual unsigned int get_index_count() = 0;
     protected:
         virtual unsigned int get_max_index_count() = 0;
         virtual unsigned int get_max_vertex_count() = 0;
-        virtual unsigned int get_start_index() = 0;
-        virtual unsigned int get_index_count() = 0;
         
         std::shared_ptr<camera> main_camera;
 
@@ -41,7 +41,7 @@ class object : public drawable {
         glm::mat4 translation_matrix = glm::mat4(1.0f);
         glm::mat4 rotation_matrix = glm::mat4(1.0f);
 
-        glm::vec4 diffuse_color = glm::vec4(1.0f,0.0f,0.0f,1.0f);
+        glm::vec4 diffuse_color = glm::vec4(0.6f,0.6f,0.3f,1.0f);
         unsigned int specular_exponent = 6;
         float specular_strength = 0.5f;
         float ambient_strength = 0.3f;
@@ -68,23 +68,33 @@ class object : public drawable {
         const unsigned int shadow_map_height = 2048, shadow_map_width = 2048;
         float shadow_bias_min = 0.005;
         float shadow_bias_max = 0.012;
+
+        bool show_layers = false;
+
+        virtual void initialize();
+        virtual void initial_render_pass();
+        virtual void bind_g_buffers();
+
+        void bind_uniforms(shader_program);
+        void final_render_pass(); 
+
+        GLuint vao_handle;
+
+        shader_program phong_shader;
     private:
+
         void initilize_vao(); 
         void initilize_shadow_map();
 
-        void bind_uniforms(shader_program);
-
-        void draw_phong();
+        void draw_final_render();
         void draw_debug_mesh();
         void draw_debug_normals();
         void draw_shadow_map();
         void update_light_matrix();
         
-        GLuint vao_handle;
         GLuint fbo_depth_handle;
         GLuint depth_texture_handle;
 
-        shader_program phong_shader;
         shader_program debug_mesh_shader;
         shader_program debug_normals_shader;
         shader_program shadow_shader;

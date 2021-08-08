@@ -86,6 +86,8 @@ icosphere::icosphere(std::shared_ptr<camera> camera) : object(camera) {
     indices = array_indices;
 
     scale_matrix = glm::scale(scale_matrix, glm::vec3(10.0f,10.0f,10.0f));
+
+    planet_layer_shader = shader_program("sphere_vertex.glsl", "planet/planet_color_layers_fragment.glsl", nullptr, "sphere_tcs.glsl",  "sphere_tes.glsl");
 }
 
 void icosphere::subdivide() {
@@ -201,6 +203,8 @@ void icosphere::on_draw_ui() {
     ImGui::Text("Shadow");
     ImGui::SliderFloat("Bias min", &shadow_bias_min, 0.0f, 0.1f);
     ImGui::SliderFloat("Bias max", &shadow_bias_max, 0.0f, 0.1f);
+
+    ImGui::Checkbox("Layers", &show_layers);
 }
 
 const char* icosphere::window_name() {
@@ -227,4 +231,66 @@ unsigned int icosphere::get_start_index() {
 
 unsigned int icosphere::get_index_count() {
     return subdivision_index_count.at(subdivision - 1);
+}
+
+void icosphere::initialize() {
+    object::initialize();
+
+    int screen_width = main_camera->window_width();
+    int screen_height = main_camera->window_height();
+
+    glGenFramebuffers(1, &fbo_planet_layer_handle);
+
+    glBindFramebuffer(GL_FRAMEBUFFER, fbo_planet_layer_handle);
+    glGenTextures(1, &planet_layer_color_texture_handle);
+    glBindTexture(GL_TEXTURE_2D, planet_layer_color_texture_handle);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, screen_width, screen_height, 0, GL_RGB, GL_FLOAT, NULL);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+
+    glBindTexture(GL_TEXTURE_2D, 0);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, planet_layer_color_texture_handle, 0);
+    glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+}
+
+void icosphere::initial_render_pass() {
+    object::initial_render_pass();
+
+    if(show_layers) {
+
+        glBindFramebuffer(GL_FRAMEBUFFER, fbo_planet_layer_handle);
+
+        glClear(GL_COLOR_BUFFER_BIT);
+
+        planet_layer_shader.use_program();
+
+        glPatchParameteri(GL_PATCH_VERTICES, 3);
+
+        bind_uniforms(planet_layer_shader);
+
+        glBindVertexArray(vao_handle);
+
+        glDrawElements(GL_PATCHES, get_index_count(), GL_UNSIGNED_INT, (void *)(get_start_index() * sizeof(unsigned int)));
+
+        glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    }
+}
+
+void icosphere::bind_g_buffers() {
+    object::bind_g_buffers();
+
+    if(show_layers) {
+
+        GLuint planet_layer_handle = glGetUniformLocation(phong_shader.get_shader_program_handle(), "planet_layer_map");
+        glUniform1i(planet_layer_handle, 1);
+
+        glActiveTexture(GL_TEXTURE1);
+        glBindTexture(GL_TEXTURE_2D, planet_layer_color_texture_handle);
+
+    }
+    GLuint ambient_strength_handle = glGetUniformLocation(phong_shader.get_shader_program_handle(), "show_layers");
+    glUniform1i(ambient_strength_handle, show_layers * 1);
 }

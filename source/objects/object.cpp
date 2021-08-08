@@ -5,21 +5,41 @@ object::object(std::shared_ptr<camera> _main_camera) {
 }
 
 void object::on_create() {
-    initilize_vao();
-    initilize_shadow_map();
+    initialize();
+
     debug_mesh_shader = shader_program("sphere_vertex.glsl","debug/debug_mesh_fragment.glsl", "debug/debug_mesh_geometry.glsl", "sphere_tcs.glsl",  "sphere_tes.glsl");
     debug_normals_shader = shader_program("sphere_vertex.glsl","debug/debug_normal_fragment.glsl", "debug/debug_normal_geometry.glsl", "sphere_tcs.glsl",  "sphere_tes.glsl");
     phong_shader = shader_program("sphere_vertex.glsl", "phong/phong_fragment.glsl", nullptr, "sphere_tcs.glsl",  "sphere_tes.glsl");
     shadow_shader = shader_program("shadow/shadow_vertex.glsl", "shadow/shadow_fragment.glsl", nullptr, "shadow/shadow_tcs.glsl",  "shadow/shadow_tes.glsl");
 }
 
-void object::on_draw() {
-    draw_shadow_map();
+void object::initialize() {
+    initilize_vao();
+    initilize_shadow_map();
+}
 
+void object::on_draw() {
+    initial_render_pass();
+    final_render_pass();
+}
+
+void object::initial_render_pass() {
+    draw_shadow_map();
+}
+
+void object::bind_g_buffers() {
+    GLuint shadow_map_texture_handle = glGetUniformLocation(shadow_shader.get_shader_program_handle(), "shadow_map");
+    glUniform1i(shadow_map_texture_handle, 0);
+
+    glActiveTexture(GL_TEXTURE0 + 0);
+    glBindTexture(GL_TEXTURE_2D, depth_texture_handle);
+}
+
+void object::final_render_pass() {
     if (debug_mesh) {
         draw_debug_mesh();
     } else {
-        draw_phong();
+        draw_final_render();
     }
     
     if (debug_normals) {
@@ -28,7 +48,7 @@ void object::on_draw() {
 }
 
 
-void object::draw_phong() {
+void object::draw_final_render() {
     
     phong_shader.use_program();
     
@@ -36,13 +56,12 @@ void object::draw_phong() {
 
     bind_uniforms(phong_shader);
 
-    glBindVertexArray(vao_handle);
+    bind_g_buffers();
 
-    glBindTexture(GL_TEXTURE_2D, depth_texture_handle);
+    glBindVertexArray(vao_handle);
 
     glDrawElements(GL_PATCHES, get_index_count(), GL_UNSIGNED_INT, (void*)(get_start_index() *sizeof(unsigned int)));
 }
-
 
 void object::draw_debug_mesh() {
     debug_mesh_shader.use_program();
@@ -140,6 +159,7 @@ void object::bind_uniforms(shader_program shader) {
 
     GLuint shadow_bias_max_handle = glGetUniformLocation(shader.get_shader_program_handle(), "shadow_bias_max");
     glUniform1f(shadow_bias_max_handle, shadow_bias_max);
+
 
     glUniformMatrix4fv(mvp_id, 1, GL_FALSE, glm::value_ptr(mvp));
     glUniformMatrix4fv(v_id, 1, GL_FALSE, glm::value_ptr(main_camera->get_look_matrix()));
@@ -244,10 +264,14 @@ void object::draw_shadow_map() {
 
     bind_uniforms(shadow_shader);
 
+
     glBindVertexArray(vao_handle);
 
-    glDrawElements(GL_PATCHES, get_index_count(), GL_UNSIGNED_INT,  (void*)(get_start_index() * sizeof(unsigned int)));
+    unsigned int index_count = get_index_count();
+    unsigned int start_index = get_start_index();
+    glDrawElements(GL_PATCHES, index_count, GL_UNSIGNED_INT,  (void*)(start_index * sizeof(unsigned int)));
     
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
     glViewport(original_viewport[0], original_viewport[1], original_viewport[2], original_viewport[3]);
+
 }

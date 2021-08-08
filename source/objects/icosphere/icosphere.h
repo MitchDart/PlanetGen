@@ -8,6 +8,7 @@
 #include <glm/gtc/type_ptr.hpp>
 
 #include "../object.h"
+#include "../../shaders/shader_program.h"
 
 struct face {
     glm::vec3 points[3];
@@ -29,7 +30,9 @@ class icosphere : public object, public windowable {
 
         void on_draw_ui();
         const char* window_name();
-    protected:
+        void initialize() override;
+        void initial_render_pass() override;
+        void bind_g_buffers() override;
     private:
         std::shared_ptr<float[]> vertices;
         std::shared_ptr<unsigned int[]> indices;
@@ -45,6 +48,12 @@ class icosphere : public object, public windowable {
         std::vector<unsigned int> subdivision_index_count;
 
         void subdivide();
+        void initialize_planet_layer_map();
+
+        GLuint fbo_planet_layer_handle;
+        GLuint planet_layer_color_texture_handle;
+
+        shader_program planet_layer_shader;
 };
 
 
